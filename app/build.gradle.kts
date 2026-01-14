@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.google.services)
+    // alias(libs.plugins.google.services)
 }
 
 android {
@@ -64,6 +64,9 @@ dependencies {
 
     // Navigation
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Dependency Injection (Koin)
     implementation(platform(libs.koin.bom))
@@ -87,8 +90,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore)
+    // implementation(platform(libs.firebase.bom))
+    // implementation(libs.firebase.firestore)
 
     // Coil (Image Loading)
     implementation(libs.coil.compose)

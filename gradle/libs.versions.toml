@@ -14,8 +14,13 @@ ksp = "2.3.4"
 google-services = "4.4.4"
 
 # Navigation 2 & Coil
+# Navigation 2 & Coil
 navigationCompose = "2.9.6"
 coilCompose = "3.3.0"
+
+# Navigation 3
+navigation3 = "1.1.0-alpha01"
+lifecycleViewModelNavigation3 = "2.8.0-alpha01"
 
 # Database & DI & Network
 room = "2.8.4"
@@ -52,7 +57,13 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 
 # Navigation 2 (Stable)
+# Navigation 2 (Stable)
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+# Navigation 3
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewModelNavigation3" }
 
 # Room Database
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
