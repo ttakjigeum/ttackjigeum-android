@@ -1,6 +1,7 @@
 package com.devhjs.ttackjigeum_android
 
 import android.app.Application
+import com.devhjs.ttackjigeum_android.core.di.databaseModule
 import com.devhjs.ttackjigeum_android.core.di.repositoryModule
 import com.devhjs.ttackjigeum_android.core.di.useCaseModule
 import com.devhjs.ttackjigeum_android.core.di.viewModelModule
@@ -16,6 +17,7 @@ class TtakjigeumApplication : Application() {
             androidLogger()
             androidContext(this@TtakjigeumApplication)
             modules(
+                databaseModule,
                 repositoryModule,
                 useCaseModule,
                 viewModelModule
