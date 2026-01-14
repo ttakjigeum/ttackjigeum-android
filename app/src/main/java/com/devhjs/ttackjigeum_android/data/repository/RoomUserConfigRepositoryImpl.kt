@@ -14,6 +14,10 @@ class RoomUserConfigRepositoryImpl(
         return userConfigDao.findById(productId)?.toDomain()
     }
 
+    override suspend fun getAllUserConfigs(): List<UserConfig> {
+        return userConfigDao.getAll().map { it.toDomain() }
+    }
+
     override suspend fun saveUserConfig(userConfig: UserConfig) {
         userConfigDao.insert(userConfig.toEntity())
     }

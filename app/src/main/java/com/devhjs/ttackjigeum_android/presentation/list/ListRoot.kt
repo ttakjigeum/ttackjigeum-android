@@ -1,55 +1,36 @@
 package com.devhjs.ttackjigeum_android.presentation.list
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
+import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.devhjs.ttackjigeum_android.presentation.component.CustomAppBar
-import com.devhjs.ttackjigeum_android.presentation.component.CustomFloatingActionButton
-import com.devhjs.ttackjigeum_android.presentation.list.component.AddProductBottomSheet
-import com.devhjs.ttackjigeum_android.ui.theme.AppColors
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ListRoot(
-    navigateToDetail: () -> Unit = {},
+    viewModel: ListViewModel = koinViewModel(),
+    navigateToDetail: (Long) -> Unit = {},
 ) {
-    var showSheet by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    Scaffold(
-        containerColor = AppColors.AppBackground,
-        topBar = {
-            CustomAppBar(
-                showBadge = true,
-                onNotificationClick = navigateToDetail,
-            )
-        },
-        floatingActionButton = {
-            CustomFloatingActionButton(
-                onClick = { showSheet = true }
-            )
-        },
-    ) { innerPadding ->
-        ListScreen(modifier = Modifier.padding(innerPadding))
-
-        if (showSheet) {
-            AddProductBottomSheet(
-                onDismissRequest = { showSheet = false },
-                onConfirm = { link ->
-                    // 여기서 링크 등록 로직 수행
-                    showSheet = false
-                },
-            )
+    LaunchedEffect(viewModel.event) {
+        viewModel.event.collect { event ->
+            when (event) {
+                is ListEvent.NavigateToDetail -> {
+                    navigateToDetail(event.productId)
+                }
+                is ListEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-private fun ListRootPreview() {
-    ListRoot()
+    ListScreen(
+        state = state,
+        onAction = viewModel::onAction
+    )
 }

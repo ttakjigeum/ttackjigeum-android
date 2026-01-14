@@ -30,7 +30,9 @@ fun NavigationRoot(
         entryProvider = entryProvider {
             entry<Route.List> {
                 ListRoot(
-                    navigateToDetail = { backStack.add(Route.Detail(1L)) }
+                    navigateToDetail = { productId -> 
+                        backStack.add(Route.Detail(productId)) 
+                    }
                 )
             }
             entry<Route.Detail> { route ->

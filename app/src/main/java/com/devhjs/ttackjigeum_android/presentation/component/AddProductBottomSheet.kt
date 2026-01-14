@@ -1,4 +1,4 @@
-package com.devhjs.ttackjigeum_android.presentation.list.component
+package com.devhjs.ttackjigeum_android.presentation.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
