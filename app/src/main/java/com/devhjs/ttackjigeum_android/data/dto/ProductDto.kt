@@ -1,6 +1,8 @@
-package com.devhjs.ttackjigeum_android.domain.model
+package com.devhjs.ttackjigeum_android.data.remote.dto
 
-data class Product(
+import com.devhjs.ttackjigeum_android.domain.model.PriceHistory
+
+data class ProductDto(
     val id: Long,
     val name: String,
     val originalPrice: Int,
@@ -10,5 +12,5 @@ data class Product(
     val averagePrice: Int,
     val isFavorite: Boolean,
     val url: String,
-    val imageUrl: String,
+    val imageUrl: String
 )
