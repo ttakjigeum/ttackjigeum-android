@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,12 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.devhjs.ttackjigeum_android.R
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
@@ -61,7 +64,7 @@ fun ProductCardItem(
                 .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // 1. 좌측 상품 이미지 (이미지가 없을 때 ic_noimage 표시)
+            // 1. 좌측 상품 이미지 (Coil AsyncImage 사용)
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -70,14 +73,14 @@ fun ProductCardItem(
                     .background(AppColors.IconGray2), // 배경색
                 contentAlignment = Alignment.Center
             ) {
-                // TODO: 실제 이미지 로딩 라이브러리(Coil 등) 사용 필요. 현재는 Mock 데이터 기반이므로 플레이스홀더 사용 혹은 이미지 URL 처리
                 if (product.imageUrl.isNotEmpty()) {
-                    // Coil 등을 사용하지 않는 환경이라면 플레이스홀더 유지, 추후 추가
-                     Image(
-                        painter = painterResource(R.drawable.ic_noimage),
-                        contentDescription = "이미지 없음",
-                        modifier = Modifier.size(24.dp),
-                        colorFilter = ColorFilter.tint(AppColors.IconGray1)
+                    AsyncImage(
+                        model = product.imageUrl,
+                        contentDescription = product.name,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(R.drawable.ic_noimage),
+                        placeholder = painterResource(R.drawable.ic_noimage)
                     )
                 } else {
                     Image(

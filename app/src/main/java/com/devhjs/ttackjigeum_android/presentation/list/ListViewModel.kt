@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.usecase.GetProductsUseCase
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -19,8 +19,8 @@ class ListViewModel(
     private val _state = MutableStateFlow(ListState())
     val state: StateFlow<ListState> = _state.asStateFlow()
 
-    private val _event = Channel<ListEvent>()
-    val event = _event.receiveAsFlow()
+    private val _event = MutableSharedFlow<ListEvent>()
+    val event = _event.asSharedFlow()
 
     init {
         loadProducts()
@@ -30,7 +30,7 @@ class ListViewModel(
         when (action) {
             is ListAction.OnProductClick -> {
                 viewModelScope.launch {
-                    _event.send(ListEvent.NavigateToDetail(action.product.id))
+                    _event.emit(ListEvent.NavigateToDetail(action.product.id))
                 }
             }
             is ListAction.OnNotificationClick -> {
@@ -40,7 +40,6 @@ class ListViewModel(
                 // 링크 추가 로직 처리 (TODO)
                 loadProducts() // 리프레시 예시
             }
-            else -> {}
         }
     }
 
@@ -59,7 +58,7 @@ class ListViewModel(
                 }
                 is Result.Error -> {
                     _state.update { it.copy(isLoading = false) }
-                    _event.send(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
+                    _event.emit(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
                 }
             }
         }
