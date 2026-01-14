@@ -27,18 +27,19 @@ import com.devhjs.ttackjigeum_android.presentation.component.PriceInfoCard
 import com.devhjs.ttackjigeum_android.presentation.component.TargetPriceSlider
 
 @Composable
-fun DetailScreen() {
-    var isNotificationActive by remember { mutableStateOf(false) }
-
+fun DetailScreen(
+    state: DetailState,
+    onAction: (DetailAction) -> Unit
+) {
     Scaffold(
         topBar = {
-            DetailTopAppBar(onBackClick = {})
+            DetailTopAppBar(onBackClick = { onAction(DetailAction.OnBackClick) })
         },
         bottomBar = {
             DetailBottomBar(
-                isNotificationActive = isNotificationActive,
-                onNotificationClick = { isNotificationActive = !isNotificationActive },
-                onPurchaseClick = {}
+                isNotificationActive = state.isNotificationActive,
+                onNotificationClick = { onAction(DetailAction.OnNotificationToggle) },
+                onPurchaseClick = { onAction(DetailAction.OnPurchaseClick) }
             )
         },
         containerColor = AppColors.White
@@ -50,15 +51,26 @@ fun DetailScreen() {
                 .verticalScroll(rememberScrollState())
                 .background(AppColors.White)
         ) {
-            DetailProductCard()
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            PriceInfoCard()
+            state.product?.let { product ->
+                DetailProductCard(
+                    name = product.name,
+                    imageUrl = product.imageUrl
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                PriceInfoCard(
+                    currentPrice = product.currentPrice,
+                    originalPrice = product.originalPrice,
+                    targetPrice = product.targetPrice
+                )
+            }
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            HistoryGraph()
+            HistoryGraph(
+                histories = state.priceHistories
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
             
