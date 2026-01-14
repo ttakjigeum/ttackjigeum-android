@@ -19,7 +19,7 @@ PR 제목 규칙 반드시 지켜주세요
 
 ## 🔍 Related Issue
 <!-- Issue Close 를 하고 싶지 않다면 Closes 를 지워주세요 -->
-- Closes # 이슈번호
+- # 이슈번호
 
 ## 📸 Screen Shot (Optional)
 <!-- UI 변경 사항이 있다면 스크린샷이나 GIF로 첨부해주세요. -->
