@@ -11,5 +11,4 @@ data class Product(
     val isFavorite: Boolean,
     val url: String,
     val imageUrl: String,
-    val priceHistory: List<PriceHistory>
 )
