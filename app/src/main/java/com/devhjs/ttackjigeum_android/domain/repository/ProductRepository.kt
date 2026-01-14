@@ -1,9 +1,9 @@
 package com.devhjs.ttackjigeum_android.domain.repository
 
 import com.devhjs.ttackjigeum_android.domain.model.Product
-import kotlinx.coroutines.flow.Flow
+
 
 interface ProductRepository {
-    fun getProducts(): Flow<List<Product>>
-    fun getProductById(id: Long): Flow<Product?>
+    suspend fun getProducts(): List<Product>
+    suspend fun getProductById(id: Long): Product?
 }
