@@ -34,16 +34,20 @@ fun NavigationRoot(
         entryProvider = entryProvider {
             entry<Route.List> {
                 ListRoot(
-                    navigateToDetail = { backStack.add(Route.Detail) }
+                    navigateToDetail = { productId -> 
+                        backStack.add(Route.Detail(productId)) 
+                    }
                 )
             }
-            entry<Route.Detail> {
+            entry<Route.Detail> { route ->
+                val productId = route.id
+                // TODO: DetailScreen(productId = productId) 호출로 변경 필요
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Button(onClick = { backStack.removeAt(backStack.lastIndex) }) {
-                        Text("Go Back")
+                        Text("Go Back (Product ID: $productId)")
                     }
                 }
             }

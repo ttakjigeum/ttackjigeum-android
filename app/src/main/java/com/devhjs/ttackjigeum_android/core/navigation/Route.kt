@@ -9,5 +9,5 @@ sealed interface Route : NavKey {
     data object List : Route
 
     @Serializable
-    data object Detail : Route
+    data class Detail(val id: Long) : Route
 }

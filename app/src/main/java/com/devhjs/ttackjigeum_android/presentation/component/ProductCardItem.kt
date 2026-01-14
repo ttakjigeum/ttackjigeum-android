@@ -36,9 +36,17 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun ProductCardItem(
-    badgeType: BadgeType = BadgeType.LOWEST_PRICE
+    product: com.devhjs.ttackjigeum_android.domain.model.Product,
+    onClick: () -> Unit = {},
 ) {
+    val badgeType = when {
+        product.currentPrice <= product.lowestPrice -> BadgeType.LOWEST_PRICE
+        product.currentPrice < product.originalPrice -> BadgeType.PRICE_DROP
+        else -> BadgeType.NO_CHANGE
+    }
+
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp), // 리스트 간격
@@ -62,12 +70,23 @@ fun ProductCardItem(
                     .background(AppColors.IconGray2), // 배경색
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_noimage),
-                    contentDescription = "이미지 없음",
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(AppColors.IconGray1)
-                )
+                // TODO: 실제 이미지 로딩 라이브러리(Coil 등) 사용 필요. 현재는 Mock 데이터 기반이므로 플레이스홀더 사용 혹은 이미지 URL 처리
+                if (product.imageUrl.isNotEmpty()) {
+                    // Coil 등을 사용하지 않는 환경이라면 플레이스홀더 유지, 추후 추가
+                     Image(
+                        painter = painterResource(R.drawable.ic_noimage),
+                        contentDescription = "이미지 없음",
+                        modifier = Modifier.size(24.dp),
+                        colorFilter = ColorFilter.tint(AppColors.IconGray1)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.ic_noimage),
+                        contentDescription = "이미지 없음",
+                        modifier = Modifier.size(24.dp),
+                        colorFilter = ColorFilter.tint(AppColors.IconGray1)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -78,7 +97,7 @@ fun ProductCardItem(
             ) {
                 // (1) 상품명
                 Text(
-                    text = "소니 WH-1000XM5 무선 노이즈 캔셀링 헤드폰",
+                    text = product.name,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
@@ -90,7 +109,7 @@ fun ProductCardItem(
 
                 // (2) 목표가
                 Text(
-                    text = "목표가: ₩320,000",
+                    text = "목표가: ₩${java.text.NumberFormat.getInstance().format(product.targetPrice)}",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -105,7 +124,7 @@ fun ProductCardItem(
                 ) {
                     // 현재 가격
                     Text(
-                        text = "₩298,000",
+                        text = "₩${java.text.NumberFormat.getInstance().format(product.currentPrice)}",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (badgeType == BadgeType.NO_CHANGE) AppColors.TextGray1 else AppColors.Primary
@@ -121,20 +140,20 @@ fun ProductCardItem(
     }
 }
 
-@Preview(showBackground = true, name = "Lowest Price")
+@Preview(showBackground = true)
 @Composable
-fun PreviewLowestPrice() {
-    ProductCardItem(badgeType = BadgeType.LOWEST_PRICE)
-}
-
-@Preview(showBackground = true, name = "Price Drop")
-@Composable
-fun PreviewPriceDrop() {
-    ProductCardItem(badgeType = BadgeType.PRICE_DROP)
-}
-
-@Preview(showBackground = true, name = "No Change")
-@Composable
-fun PreviewNoChange() {
-    ProductCardItem(badgeType = BadgeType.NO_CHANGE)
+fun PreviewProductCardItem() {
+    val mockProduct = com.devhjs.ttackjigeum_android.domain.model.Product(
+        id = 1L,
+        name = "소니 WH-1000XM5 무선 노이즈 캔셀링 헤드폰",
+        originalPrice = 350000,
+        currentPrice = 298000,
+        targetPrice = 320000,
+        lowestPrice = 290000,
+        averagePrice = 330000,
+        isFavorite = false,
+        url = "",
+        imageUrl = ""
+    )
+    ProductCardItem(product = mockProduct)
 }
