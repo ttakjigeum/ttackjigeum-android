@@ -14,6 +14,6 @@ fun ProductDto.toDomain(): Product {
         averagePrice = averagePrice,
         isFavorite = isFavorite,
         url = url,
-        imageUrl = imageUrl
+        imageUrl = imageUrl,
     )
 }
