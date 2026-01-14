@@ -22,10 +22,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
+import com.devhjs.ttackjigeum_android.domain.model.PriceHistory
 
 @Composable
 fun HistoryGraph(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    histories: List<PriceHistory>
 ) {
     Card(
         modifier = modifier
@@ -47,10 +49,22 @@ fun HistoryGraph(
 
             // Mock Data and Graph
             // Using a simple Canvas implementation for visual representation
+            // Normalizing price data for graph
+            val points = if (histories.isNotEmpty()) {
+                val maxPrice = histories.maxOfOrNull { it.price } ?: 1
+                val minPrice = histories.minOfOrNull { it.price } ?: 0
+                val range = (maxPrice - minPrice).takeIf { it > 0 } ?: 1
+                
+                histories.map { (it.price - minPrice).toFloat() / range }
+            } else {
+                listOf(0.5f, 0.6f, 0.4f, 0.7f, 0.5f) // Default mock if empty
+            }
+
             GraphCanvas(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(150.dp),
+                points = points
             )
             
             // Labels (Simplified)
@@ -61,7 +75,8 @@ fun HistoryGraph(
 
 @Composable
 fun GraphCanvas(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    points: List<Float>
 ) {
     val graphColor = AppColors.Primary // Green
     
@@ -69,10 +84,8 @@ fun GraphCanvas(
         val width = size.width
         val height = size.height
         
-        // Mock points (normalized 0..1)
-        val points = listOf(
-            0.5f, 0.55f, 0.4f, 0.2f, 0.1f, 0.3f, 0.7f, 0.9f, 0.8f, 0.6f, 0.5f
-        )
+        // Points are passed as parameter
+        if (points.isEmpty()) return@Canvas
         
         val stepX = width / (points.size - 1)
         
@@ -142,5 +155,5 @@ fun GraphCanvas(
 @Preview
 @Composable
 fun HistoryGraphPreview() {
-    HistoryGraph()
+    HistoryGraph(histories = emptyList())
 }

@@ -33,7 +33,12 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun PriceInfoCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    currentPrice: Int,
+    originalPrice: Int?,
+    targetPrice: Int?,
+    lowestPrice: Int?,
+    averagePrice: Int?
 ) {
     Column(
         modifier = modifier
@@ -46,18 +51,20 @@ fun PriceInfoCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "₩348,000",
+                text = "₩${String.format("%,d", currentPrice)}",
                 style = AppTextStyles.headerTextBold
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = "₩399,000",
-                style = AppTextStyles.mediumTextRegular.copy(
-                    color = AppColors.TextGray2,
-                    textDecoration = TextDecoration.LineThrough
-                ),
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
+            if (originalPrice != null) {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "₩${String.format("%,d", originalPrice)}",
+                    style = AppTextStyles.mediumTextRegular.copy(
+                        color = AppColors.TextGray2,
+                        textDecoration = TextDecoration.LineThrough
+                    ),
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -90,16 +97,16 @@ fun PriceInfoCard(
                 icon = painterResource(id = R.drawable.ic_check_circle),
                 iconColor = AppColors.Primary,
                 title = "역대 최저가",
-                price = "₩298,000",
-                date = "2026. 1. 14"
+                price = if (lowestPrice != null) "₩${String.format("%,d", lowestPrice)}" else "-",
+                date = "날짜 정보 없음" // TODO: Add date to Product model
             )
             PriceStatCard(
                 modifier = Modifier.weight(1f),
                 icon = painterResource(id = R.drawable.ic_bar_chart),
                 iconColor = AppColors.TextGray2,
                 title = "평균가",
-                price = "₩356,000",
-                date = "최근 1개월"
+                price = if (averagePrice != null) "₩${String.format("%,d", averagePrice)}" else "-",
+                date = "최근 3개월"
             )
         }
     }
@@ -158,5 +165,11 @@ fun PriceStatCard(
 @Preview(showBackground = true)
 @Composable
 fun PriceInfoCardPreview() {
-    PriceInfoCard()
+    PriceInfoCard(
+        currentPrice = 348000,
+        originalPrice = 399000,
+        targetPrice = 320000,
+        lowestPrice = 298000,
+        averagePrice = 356000
+    )
 }

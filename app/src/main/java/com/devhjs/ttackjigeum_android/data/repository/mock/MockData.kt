@@ -14,8 +14,8 @@ object MockData {
             lowestPrice = 3400,
             averagePrice = 4100,
             isFavorite = true,
-            url = "https://example.com/product/1",
-            imageUrl = "https://img.example.com/shin.jpg"
+            url = "https://www.coupang.com/vp/products/7038366959?itemId=17397483274&vendorItemId=84566941756&src=1042503&spec=10304982&addtag=400&ctag=7038366959&lptag=7038366959-17397483274&itime=20260114181549&pageType=PRODUCT&pageValue=7038366959&wPcid=17664129008434401342420&wRef=www.google.com&wTime=20260114181549&redirect=landing&gclid=CjwKCAiAmp3LBhAkEiwAJM2JUL-VMgBuiqdHaHc_vzmqjAFtPTGtRhdW-OT7EA55O0Zr5ZMvncZ9ZxoCqUcQAvD_BwE&mcid=4d7f7620f0224ae7a728bda1a7ff5500&campaignid=21793140442&adgroupid=",
+            imageUrl = "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRwXU2SFixfY9C4PX2un5j09NSMWnqPR_lRTz6OKMQznCUEyugn5CVFf4ny7dI_bYghYpWGZCuRxZcQHDNffDa7BKwv07R2VGZYA10bDO8m92qioweDKr2hTbvz4U0WijdNGpzVeA&usqp=CAc"
         ),
         Product(
             id = 2L,
@@ -47,7 +47,9 @@ object MockData {
         1L to listOf(
             PriceHistory("2024-01-10", 4500),
             PriceHistory("2024-01-11", 4300),
-            PriceHistory("2024-01-12", 3900)
+            PriceHistory("2024-01-12", 3900),
+            PriceHistory("2024-01-13", 5000),
+            PriceHistory("2024-01-14", 10000),
         ),
         2L to listOf(
             PriceHistory("2024-01-08", 2980),
