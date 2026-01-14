@@ -14,6 +14,9 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 
 
+import com.devhjs.ttackjigeum_android.presentation.list.ListRoot
+
+
 @Composable
 fun NavigationRoot(
     modifier: Modifier = Modifier
@@ -30,14 +33,9 @@ fun NavigationRoot(
         ),
         entryProvider = entryProvider {
             entry<Route.List> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Button(onClick = { backStack.add(Route.Detail) }) {
-                        Text("Go to Detail")
-                    }
-                }
+                ListRoot(
+                    navigateToDetail = { backStack.add(Route.Detail) }
+                )
             }
             entry<Route.Detail> {
                 Box(
