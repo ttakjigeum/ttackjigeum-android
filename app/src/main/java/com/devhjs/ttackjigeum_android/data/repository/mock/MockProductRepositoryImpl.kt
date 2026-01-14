@@ -12,4 +12,16 @@ class MockProductRepositoryImpl : ProductRepository {
     override suspend fun getProductById(id: Long): Product? {
         return MockData.MockProducts.find { it.id == id }
     }
+
+    override suspend fun addProduct(product: Product) {
+        // Mock implementation
+    }
+
+    override suspend fun deleteProduct(id: Long) {
+        // Mock implementation
+    }
+
+    override suspend fun deleteProduct(product: Product) {
+        // Mock implementation
+    }
 }
