@@ -10,35 +10,31 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.presentation.component.DetailBottomBar
 import com.devhjs.ttackjigeum_android.presentation.component.DetailProductCard
 import com.devhjs.ttackjigeum_android.presentation.component.DetailTopAppBar
 import com.devhjs.ttackjigeum_android.presentation.component.HistoryGraph
 import com.devhjs.ttackjigeum_android.presentation.component.PriceInfoCard
 import com.devhjs.ttackjigeum_android.presentation.component.TargetPriceSlider
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
-fun DetailScreen() {
-    var isNotificationActive by remember { mutableStateOf(false) }
-
+fun DetailScreen(
+    state: DetailState,
+    onAction: (DetailAction) -> Unit
+) {
     Scaffold(
         topBar = {
-            DetailTopAppBar(onBackClick = {})
+            DetailTopAppBar(onBackClick = { onAction(DetailAction.OnBackClick) })
         },
         bottomBar = {
             DetailBottomBar(
-                isNotificationActive = isNotificationActive,
-                onNotificationClick = { isNotificationActive = !isNotificationActive },
-                onPurchaseClick = {}
+                isNotificationActive = state.isNotificationActive,
+                onNotificationClick = { onAction(DetailAction.OnNotificationToggle) },
+                onPurchaseClick = { onAction(DetailAction.OnPurchaseClick) }
             )
         },
         containerColor = AppColors.White
@@ -50,19 +46,37 @@ fun DetailScreen() {
                 .verticalScroll(rememberScrollState())
                 .background(AppColors.White)
         ) {
-            DetailProductCard()
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            PriceInfoCard()
+            state.product?.let { product ->
+                DetailProductCard(
+                    name = product.name,
+                    imageUrl = product.imageUrl
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                PriceInfoCard(
+                    currentPrice = product.currentPrice,
+                    originalPrice = product.originalPrice.takeIf { it > product.currentPrice }, // Validate original price
+                    targetPrice = product.targetPrice,
+                    lowestPrice = product.lowestPrice,
+                    averagePrice = product.averagePrice
+                )
+            }
             
             Spacer(modifier = Modifier.height(24.dp))
             
-            HistoryGraph()
+            HistoryGraph(
+                histories = state.priceHistories
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
             
-            TargetPriceSlider()
+            state.product?.let { product ->
+                TargetPriceSlider(
+                    targetPrice = product.targetPrice,
+                    currentPrice = product.currentPrice
+                )
+            }
             
             Spacer(modifier = Modifier.height(100.dp)) // Extra space for bottom bar
         }
@@ -72,5 +86,21 @@ fun DetailScreen() {
 @Preview
 @Composable
 fun DetailScreenPreview() {
-    DetailScreen()
+    DetailScreen(
+        state = DetailState(
+            product = com.devhjs.ttackjigeum_android.domain.model.Product(
+                id = 1,
+                name = "Sony WH-1000XM5",
+                originalPrice = 399000,
+                currentPrice = 348000,
+                targetPrice = 320000,
+                lowestPrice = 298000,
+                averagePrice = 356000,
+                isFavorite = false,
+                url = "",
+                imageUrl = ""
+            )
+        ),
+        onAction = {}
+    )
 }

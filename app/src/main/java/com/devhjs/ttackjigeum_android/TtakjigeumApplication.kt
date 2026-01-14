@@ -17,9 +17,9 @@ class TtakjigeumApplication : Application() {
             androidLogger()
             androidContext(this@TtakjigeumApplication)
             modules(
+                databaseModule,
                 repositoryModule,
                 useCaseModule,
-                databaseModule,
                 viewModelModule
             )
         }

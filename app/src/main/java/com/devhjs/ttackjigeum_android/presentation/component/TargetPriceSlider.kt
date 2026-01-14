@@ -35,11 +35,17 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 @Composable
 fun TargetPriceSlider(
     modifier: Modifier = Modifier,
-    currentPrice: Int = 348000,
-    minPrice: Int = 250000,
-    maxPrice: Int = 400000
+    targetPrice: Int,
+    currentPrice: Int
 ) {
-    var sliderValue by remember { mutableFloatStateOf(320000f) }
+    // Determine min/max range based on prices
+    // Example logic: Min = 0, Max = Current Price * 1.5 (or similar)
+    // For now, let's keep hardcoded range logic or passed params.
+    // User asked to modify data.
+    // Let's assume range is dynamic.
+    val minPrice = (currentPrice * 0.5).toInt() // Example: 50% of current
+    val maxPrice = (currentPrice * 1.2).toInt() // Example: 120% of current
+    var sliderValue by remember(targetPrice) { mutableFloatStateOf(targetPrice.toFloat()) }
 
     Card(
         modifier = modifier
@@ -140,5 +146,8 @@ fun TargetPriceSlider(
 @Preview
 @Composable
 fun TargetPriceSliderPreview() {
-    TargetPriceSlider()
+    TargetPriceSlider(
+        targetPrice = 320000,
+        currentPrice = 348000
+    )
 }

@@ -15,14 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 
 @Composable
 fun DetailProductCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    name: String,
+    imageUrl: String
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
@@ -49,20 +53,37 @@ fun DetailProductCard(
                     )
             )
 
-            // TODO: Replace with actual Image using Coil
-            Box(
+            SubcomposeAsyncImage(
+                model = imageUrl,
+                contentDescription = name,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.5f)
-                    .align(Alignment.Center)
-                    .background(Color.DarkGray.copy(alpha = 0.5f)) // Placeholder
-            ) {
-                 Text(
-                     text = "Product Image Placeholder",
-                     color = Color.White,
-                     modifier = Modifier.align(Alignment.Center)
-                 )
-            }
+                    .aspectRatio(1.2f)
+                    .align(Alignment.Center),
+                contentScale = ContentScale.Crop,
+                error = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.2f)
+                            .background(Color.DarkGray.copy(alpha = 0.5f))
+                    ) {
+                        Text(
+                            text = "이미지를 불러올 수 없습니다",
+                            color = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                },
+                loading = {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1.2f)
+                            .background(Color.DarkGray.copy(alpha = 0.5f))
+                    )
+                }
+            )
 
             Column(
                 modifier = Modifier
@@ -70,7 +91,7 @@ fun DetailProductCard(
                     .padding(20.dp)
             ) {
                 Text(
-                    text = "Sony WH-1000XM5",
+                    text = name,
                     style = AppTextStyles.largeTextBold.copy(
                         color = AppColors.White
                     )
@@ -83,5 +104,8 @@ fun DetailProductCard(
 @Preview
 @Composable
 fun DetailProductCardPreview() {
-    DetailProductCard()
+    DetailProductCard(
+        name = "Sony WH-1000XM5",
+        imageUrl = ""
+    )
 }
