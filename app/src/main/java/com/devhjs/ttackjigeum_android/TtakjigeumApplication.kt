@@ -1,6 +1,7 @@
 package com.devhjs.ttackjigeum_android
 
 import android.app.Application
+import com.devhjs.ttackjigeum_android.core.di.databaseModule
 import com.devhjs.ttackjigeum_android.core.di.repositoryModule
 import com.devhjs.ttackjigeum_android.core.di.useCaseModule
 import org.koin.android.ext.koin.androidContext
@@ -14,7 +15,11 @@ class TtakjigeumApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@TtakjigeumApplication)
-            modules(repositoryModule, useCaseModule)
+            modules(
+                repositoryModule,
+                useCaseModule,
+                databaseModule,
+            )
         }
     }
 }
