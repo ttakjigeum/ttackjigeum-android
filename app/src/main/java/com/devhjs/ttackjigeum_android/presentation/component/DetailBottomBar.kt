@@ -15,16 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun DetailBottomBar(
+    isNotificationActive: Boolean,
     onNotificationClick: () -> Unit,
     onPurchaseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Surface(
         shadowElevation = 8.dp,
-        color = Color.White,
+        color = AppColors.White,
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
@@ -35,6 +37,7 @@ fun DetailBottomBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             NotificationButton(
+                isActive = isNotificationActive,
                 onClick = onNotificationClick
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -50,6 +53,7 @@ fun DetailBottomBar(
 @Composable
 fun DetailBottomBarPreview() {
     DetailBottomBar(
+        isNotificationActive = false,
         onNotificationClick = {},
         onPurchaseClick = {}
     )

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun PurchaseButton(
@@ -27,13 +28,13 @@ fun PurchaseButton(
             .height(56.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF00C853) // Green color
+            containerColor = AppColors.Primary // Green color
         )
     ) {
         Text(
             text = "지금 구매하기",
             style = AppTextStyles.mediumTextBold.copy(
-                color = Color.White
+                color = AppColors.White
             )
         )
         Spacer(modifier = Modifier.width(8.dp))

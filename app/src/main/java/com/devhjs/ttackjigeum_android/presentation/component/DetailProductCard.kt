@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 
 @Composable
@@ -71,7 +72,7 @@ fun DetailProductCard(
                 Text(
                     text = "Sony WH-1000XM5",
                     style = AppTextStyles.largeTextBold.copy(
-                        color = Color.White
+                        color = AppColors.White
                     )
                 )
             }

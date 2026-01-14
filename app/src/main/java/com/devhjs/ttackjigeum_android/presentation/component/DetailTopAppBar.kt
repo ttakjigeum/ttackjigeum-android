@@ -13,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import com.devhjs.ttackjigeum_android.R
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,13 +34,13 @@ fun DetailTopAppBar(
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    painter = painterResource(id = R.drawable.ic_arrow_back),
                     contentDescription = "뒤로 가기"
                 )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color.White
+            containerColor = AppColors.White
         ),
         modifier = modifier.fillMaxWidth()
     )

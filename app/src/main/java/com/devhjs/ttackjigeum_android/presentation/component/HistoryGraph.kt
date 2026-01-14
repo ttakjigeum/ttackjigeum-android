@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun HistoryGraph(
@@ -31,7 +32,7 @@ fun HistoryGraph(
             .fillMaxWidth()
             .padding(16.dp),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = AppColors.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -62,7 +63,7 @@ fun HistoryGraph(
 fun GraphCanvas(
     modifier: Modifier = Modifier
 ) {
-    val graphColor = Color(0xFF00C853) // Green
+    val graphColor = AppColors.Primary // Green
     
     Canvas(modifier = modifier) {
         val width = size.width
@@ -125,7 +126,7 @@ fun GraphCanvas(
         val lastY = height * (1 - points[lastIndex])
         
         drawCircle(
-            color = Color.White,
+            color = AppColors.White,
             radius = 6.dp.toPx(),
             center = Offset(lastX, lastY)
         )

@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun TargetPriceSlider(
@@ -45,7 +46,7 @@ fun TargetPriceSlider(
             .fillMaxWidth()
             .padding(16.dp),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = AppColors.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -64,14 +65,14 @@ fun TargetPriceSlider(
                     Text(
                         text = "가격 하락 시 알림을 보내드립니다.",
                         style = AppTextStyles.smallTextRegular.copy(
-                            color = Color.Gray
+                            color = AppColors.TextGray2
                         )
                     )
                 }
                 
                 Card(
                     shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA)),
+                    colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
                     Text(
@@ -95,9 +96,9 @@ fun TargetPriceSlider(
                         modifier = Modifier
                             .size(32.dp)
                             .shadow(4.dp, shape = CircleShape)
-                            .background(Color.White, CircleShape)
+                            .background(AppColors.White, CircleShape)
                             .padding(8.dp)
-                            .background(Color(0xFF00C853), CircleShape)
+                            .background(AppColors.Primary, CircleShape)
                     )
                 },
                 track = { sliderState ->
@@ -106,8 +107,8 @@ fun TargetPriceSlider(
                         sliderState = sliderState,
                         modifier = Modifier.height(10.dp),
                         colors = SliderDefaults.colors(
-                            activeTrackColor = Color(0xFF00C853),
-                            inactiveTrackColor = Color(0xFFEEEEEE)
+                            activeTrackColor = AppColors.Primary,
+                            inactiveTrackColor = AppColors.IconGray2
                         ),
                         thumbTrackGapSize = 0.dp
                     )
@@ -122,13 +123,13 @@ fun TargetPriceSlider(
                 Text(
                     text = "₩$minPrice",
                     style = AppTextStyles.smallerTextBold.copy(
-                        color = Color.Gray
+                        color = AppColors.TextGray2
                     )
                 )
                 Text(
                     text = "₩$maxPrice",
                     style = AppTextStyles.smallerTextBold.copy(
-                        color = Color.Gray
+                        color = AppColors.TextGray2
                     )
                 )
             }

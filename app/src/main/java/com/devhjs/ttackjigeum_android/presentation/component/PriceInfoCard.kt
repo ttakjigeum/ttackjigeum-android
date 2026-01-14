@@ -25,7 +25,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.painter.Painter
+import com.devhjs.ttackjigeum_android.R
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun PriceInfoCard(
@@ -49,7 +53,7 @@ fun PriceInfoCard(
             Text(
                 text = "₩399,000",
                 style = AppTextStyles.mediumTextRegular.copy(
-                    color = Color.Gray,
+                    color = AppColors.TextGray2,
                     textDecoration = TextDecoration.LineThrough
                 ),
                 modifier = Modifier.padding(bottom = 6.dp)
@@ -60,16 +64,16 @@ fun PriceInfoCard(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = Icons.Default.CheckCircle,
+                painter = painterResource(id = R.drawable.ic_check_circle),
                 contentDescription = null,
-                tint = Color(0xFF00C853), // Green color
+                tint = AppColors.Primary,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = "최근 30일 최저가",
                 style = AppTextStyles.smallTextBold.copy(
-                    color = Color(0xFF00C853)
+                    color = AppColors.Primary
                 )
             )
         }
@@ -83,16 +87,16 @@ fun PriceInfoCard(
         ) {
             PriceStatCard(
                 modifier = Modifier.weight(1f),
-                icon = Icons.Default.CheckCircle,
-                iconColor = Color(0xFF00C853),
+                icon = painterResource(id = R.drawable.ic_check_circle),
+                iconColor = AppColors.Primary,
                 title = "역대 최저가",
                 price = "₩298,000",
                 date = "2026. 1. 14"
             )
             PriceStatCard(
                 modifier = Modifier.weight(1f),
-                icon = Icons.Default.BarChart,
-                iconColor = Color.Gray,
+                icon = painterResource(id = R.drawable.ic_bar_chart),
+                iconColor = AppColors.TextGray2,
                 title = "평균가",
                 price = "₩356,000",
                 date = "최근 1개월"
@@ -104,7 +108,7 @@ fun PriceInfoCard(
 @Composable
 fun PriceStatCard(
     modifier: Modifier = Modifier,
-    icon: ImageVector,
+    icon: Painter,
     iconColor: Color,
     title: String,
     price: String,
@@ -113,7 +117,7 @@ fun PriceStatCard(
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFAFAFA)), // Very light gray
+        colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         // border = BorderStroke(1.dp, Color(0xFFEEEEEE)) // Optional border
     ) {
@@ -122,7 +126,7 @@ fun PriceStatCard(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = icon,
+                    painter = icon,
                     contentDescription = null,
                     tint = iconColor,
                     modifier = Modifier.size(16.dp)
@@ -131,7 +135,7 @@ fun PriceStatCard(
                 Text(
                     text = title,
                     style = AppTextStyles.smallTextRegular.copy(
-                        color = Color.Gray
+                        color = AppColors.TextGray1
                     )
                 )
             }
@@ -144,7 +148,7 @@ fun PriceStatCard(
             Text(
                 text = date,
                 style = AppTextStyles.smallTextRegular.copy(
-                    color = Color.Gray
+                    color = AppColors.TextGray1
                 )
             )
         }
