@@ -5,6 +5,6 @@ import com.devhjs.ttackjigeum_android.domain.usecase.GetProductUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    factory { GetProductUseCase(get()) }
-    factory { GetPriceHistoryUseCase(get()) }
+    single { GetProductUseCase(get()) }
+    single { GetPriceHistoryUseCase(get()) }
 }
