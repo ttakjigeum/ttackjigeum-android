@@ -7,6 +7,7 @@ import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetUserConfigUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.ToggleProductNotificationUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.UpdateTargetPriceUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -17,4 +18,5 @@ val useCaseModule = module {
     single { GetUserConfigUseCase(get()) }
     single { ToggleProductNotificationUseCase(get()) }
     single { AddProductUseCase(get(), get()) }
+    single { UpdateTargetPriceUseCase(get()) }
 }
