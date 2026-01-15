@@ -5,6 +5,7 @@ import com.devhjs.ttackjigeum_android.core.di.databaseModule
 import com.devhjs.ttackjigeum_android.core.di.repositoryModule
 import com.devhjs.ttackjigeum_android.core.di.useCaseModule
 import com.devhjs.ttackjigeum_android.core.di.viewModelModule
+import com.devhjs.ttackjigeum_android.core.di.parserModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -20,7 +21,8 @@ class TtakjigeumApplication : Application() {
                 databaseModule,
                 repositoryModule,
                 useCaseModule,
-                viewModelModule
+                viewModelModule,
+                parserModule
             )
         }
     }
