@@ -40,6 +40,9 @@ class ListViewModel(
                 // 링크 추가 로직 처리 (TODO)
                 loadProducts() // 리프레시 예시
             }
+            is ListAction.OnSearchQueryChange -> {
+                _state.update { it.copy(searchQuery = action.query) }
+            }
         }
     }
 
