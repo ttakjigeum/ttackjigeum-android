@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -33,6 +34,7 @@ fun CustomAppBar(
     Row(
         modifier = Modifier
             .fillMaxWidth() // 가로 꽉 채우기
+            .statusBarsPadding() // 상태바 영역만큼 패딩 추가
             .height(56.dp)  // 일반적인 앱바 높이
             .padding(horizontal = 20.dp), // 좌우 여백
         verticalAlignment = Alignment.CenterVertically, // 세로 중앙 정렬
