@@ -49,14 +49,6 @@ fun ListScreen(
             )
         },
     ) { innerPadding ->
-        val filteredProducts = remember(state.products, state.searchQuery) {
-            if (state.searchQuery.isEmpty()) {
-                state.products
-            } else {
-                state.products.filter { it.name.contains(state.searchQuery, ignoreCase = true) }
-            }
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,7 +67,7 @@ fun ListScreen(
             Box(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                if (!state.isLoading && filteredProducts.isEmpty()) {
+                if (!state.isLoading && state.products.isEmpty()) {
                     Text(
                         text = if (state.searchQuery.isEmpty()) "+ 를 눌러서 상품을 등록해보세요." else "검색 결과가 없습니다.",
                         color = AppColors.TextGray1,
@@ -88,7 +80,7 @@ fun ListScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     items(
-                        items = filteredProducts,
+                        items = state.products,
                         key = { it.id },
                     ) { product ->
                         ProductCardItem(
