@@ -1,13 +1,17 @@
 package com.devhjs.ttackjigeum_android.core.util
 
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 object ShareIntentHandler {
-    private val _sharedUrl = MutableSharedFlow<String>(replay = 0)
-    val sharedUrl = _sharedUrl.asSharedFlow()
+    private val _sharedUrl = MutableStateFlow<String?>(null)
+    val sharedUrl = _sharedUrl.asStateFlow()
 
-    suspend fun emitUrl(url: String) {
-        _sharedUrl.emit(url)
+    fun emitUrl(url: String) {
+        _sharedUrl.value = url
+    }
+
+    fun consumeUrl() {
+        _sharedUrl.value = null
     }
 }

@@ -28,10 +28,20 @@ class ListViewModel(
     val event = _event.asSharedFlow()
 
     init {
-        loadProducts()
         viewModelScope.launch {
+            // 초기 로딩과 공유 인텐트 처리를 순차적으로 진행하거나 로딩 상태를 통합 관리
+            _state.update { it.copy(isLoading = true) }
+            
+            // 1. 초기 상품 로드
+            loadProductsInternal()
+            
+            // 2. 공유 인텐트 대기 및 처리
             ShareIntentHandler.sharedUrl.collectLatest { url ->
-                onAction(ListAction.OnAddLinkConfirm(url))
+                url?.let {
+                    _state.update { it.copy(isLoading = true) }
+                    handleOnAddLinkConfirm(it)
+                    ShareIntentHandler.consumeUrl()
+                }
             }
         }
     }
@@ -49,19 +59,7 @@ class ListViewModel(
             is ListAction.OnAddLinkConfirm -> {
                 viewModelScope.launch {
                     _state.update { it.copy(isLoading = true) }
-                    when (val result = addProductUseCase(action.link)) {
-                        is Result.Success -> {
-                            loadProducts()
-                        }
-                        is Result.Error -> {
-                            _state.update { it.copy(isLoading = false) }
-                            val msg = when (result.error) {
-                                DataError.Local.DUPLICATE -> "이미 등록된 상품입니다."
-                                else -> "상품 등록에 실패했습니다."
-                            }
-                            _event.emit(ListEvent.ShowToast(msg))
-                        }
-                    }
+                    handleOnAddLinkConfirm(action.link)
                 }
             }
             is ListAction.OnSearchQueryChange -> {
@@ -74,20 +72,39 @@ class ListViewModel(
     private fun loadProducts() {
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
+            loadProductsInternal()
+        }
+    }
 
-            when (val result = searchProductsUseCase(_state.value.searchQuery)) {
-                is Result.Success -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            products = result.data,
-                        )
-                    }
+    private suspend fun loadProductsInternal() {
+        when (val result = searchProductsUseCase(_state.value.searchQuery)) {
+            is Result.Success -> {
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        products = result.data,
+                    )
                 }
-                is Result.Error -> {
-                    _state.update { it.copy(isLoading = false) }
-                    _event.emit(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
+            }
+            is Result.Error -> {
+                _state.update { it.copy(isLoading = false) }
+                _event.emit(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
+            }
+        }
+    }
+
+    private suspend fun handleOnAddLinkConfirm(link: String) {
+        when (val result = addProductUseCase(link)) {
+            is Result.Success -> {
+                loadProductsInternal()
+            }
+            is Result.Error -> {
+                _state.update { it.copy(isLoading = false) }
+                val msg = when (result.error) {
+                    DataError.Local.DUPLICATE -> "이미 등록된 상품입니다."
+                    else -> "상품 등록에 실패했습니다."
                 }
+                _event.emit(ListEvent.ShowToast(msg))
             }
         }
     }
