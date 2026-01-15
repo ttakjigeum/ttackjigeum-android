@@ -5,11 +5,11 @@ import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class AddProductUseCase(
     private val productRepository: ProductRepository,
-    private val userConfigRepository: RoomUserConfigRepository,
+    private val userConfigRepository: UserConfigRepository,
 ) {
     suspend operator fun invoke(url: String): Result<Unit, DataError> {
         return try {
@@ -22,7 +22,7 @@ class AddProductUseCase(
             }
 
             val newId = System.currentTimeMillis()
-            
+
             // Randomly select one of the existing mock products to copy properties from
             val templateProduct = productRepository.getProducts().randomOrNull() ?: Product(
                 id = 0,

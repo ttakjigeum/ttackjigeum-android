@@ -5,7 +5,7 @@ import com.devhjs.ttackjigeum_android.domain.model.PriceHistory
 
 fun PriceHistoryDto.toDomain(): PriceHistory {
     return PriceHistory(
-        datetime = datetime,
-        price = price
+        datetime = datetime ?: "",
+        price = price ?: 0
     )
 }

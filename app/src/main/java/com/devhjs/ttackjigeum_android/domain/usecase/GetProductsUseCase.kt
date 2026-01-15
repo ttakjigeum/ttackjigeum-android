@@ -4,12 +4,11 @@ import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
-
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class GetProductsUseCase(
     private val productRepository: ProductRepository,
-    private val userConfigRepository: RoomUserConfigRepository
+    private val userConfigRepository: UserConfigRepository
 ) {
     suspend operator fun invoke(): Result<List<Product>, DataError> {
         return try {
