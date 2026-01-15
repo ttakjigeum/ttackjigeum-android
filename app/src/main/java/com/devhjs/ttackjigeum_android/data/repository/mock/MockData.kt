@@ -61,4 +61,17 @@ object MockData {
             PriceHistory("2024-01-12", 1900)
         )
     )
+
+    val MockUserConfigs = mutableListOf(
+        com.devhjs.ttackjigeum_android.domain.model.UserConfig(
+            productId = 1L,
+            targetPrice = 3500,
+            notificationEnabled = true
+        ),
+        com.devhjs.ttackjigeum_android.domain.model.UserConfig(
+            productId = 2L,
+            targetPrice = 2500,
+            notificationEnabled = false
+        )
+    )
 }
