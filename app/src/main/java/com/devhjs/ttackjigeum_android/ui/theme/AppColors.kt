@@ -19,4 +19,6 @@ object AppColors {
 
     val Warning1 = Color(0xFFCD4243)
     val Warning2 = Color(0xFFFBECEC)
+
+    val Blue = Color(0xFF3B82F6)
 }
