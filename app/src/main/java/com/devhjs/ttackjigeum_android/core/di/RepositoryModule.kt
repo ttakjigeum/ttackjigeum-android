@@ -5,8 +5,8 @@ import com.devhjs.ttackjigeum_android.data.repository.DevPriceHistoryRepositoryI
 import com.devhjs.ttackjigeum_android.data.repository.DevProductRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.DevUserConfigRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.FirestorePriceHistoryRepositoryImpl
+import com.devhjs.ttackjigeum_android.data.repository.FirestoreProductRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.FirestoreUserConfigRepositoryImpl
-import com.devhjs.ttackjigeum_android.data.repository.ProdProductRepositoryImpl
 import com.devhjs.ttackjigeum_android.domain.repository.PriceHistoryRepository
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
 import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
@@ -17,7 +17,7 @@ val repositoryModule = module {
         if (BuildConfig.FLAVOR == "dev") {
             DevProductRepositoryImpl()
         } else {
-            ProdProductRepositoryImpl(get())
+            FirestoreProductRepositoryImpl(get())
         }
     }
     single<PriceHistoryRepository> {

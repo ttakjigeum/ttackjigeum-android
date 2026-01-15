@@ -10,7 +10,7 @@ import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class AddProductUseCase(
     private val productRepository: ProductRepository,
-    private val productParser: ProductParser
+    private val productParser: ProductParser,
     private val userConfigRepository: UserConfigRepository,
 ) {
     suspend operator fun invoke(url: String): Result<Unit, DataError> {
@@ -28,7 +28,7 @@ class AddProductUseCase(
             parseResult.fold(
                 onSuccess = { parsedData ->
                     val newId = System.currentTimeMillis()
-                    
+
                     val newProduct = Product(
                         id = newId,
                         name = parsedData.name,
