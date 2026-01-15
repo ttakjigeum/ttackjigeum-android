@@ -9,4 +9,6 @@ val useCaseModule = module {
     single { GetProductUseCase(get()) }
     single { GetProductsUseCase(get(), get()) }
     single { GetPriceHistoryUseCase(get()) }
+    single { GetUserConfigUseCase(get()) }
+    single { ToggleProductNotificationUseCase(get()) }
 }
