@@ -32,6 +32,10 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 fun ListScreen(
     state: ListState,
     onAction: (ListAction) -> Unit,
+    clipboardUrl: String?,
+    showClipboardPrompt: Boolean,
+    onClipboardPromptClick: () -> Unit,
+    onClipboardPromptDismiss: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
 
@@ -45,7 +49,10 @@ fun ListScreen(
         },
         floatingActionButton = {
             CustomFloatingActionButton(
-                onClick = { showSheet = true },
+                onClick = {
+                    onClipboardPromptDismiss()
+                    showSheet = true
+                },
             )
         },
     ) { innerPadding ->
@@ -97,15 +104,34 @@ fun ListScreen(
                         color = AppColors.Primary,
                     )
                 }
+
+                // Clipboard Prompt
+                if (showClipboardPrompt && clipboardUrl != null) {
+                    com.devhjs.ttackjigeum_android.presentation.component.ClipboardLinkSnackbar(
+                        onPromptClick = {
+                            onClipboardPromptClick()
+                            showSheet = true
+                        },
+                        onDismissClick = onClipboardPromptDismiss,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 90.dp)
+                    )
+                }
             }
         }
 
         if (showSheet) {
             AddProductBottomSheet(
-                onDismissRequest = { showSheet = false },
+                initialLink = clipboardUrl ?: "",
+                onDismissRequest = { 
+                    showSheet = false
+                    onClipboardPromptDismiss()
+                },
                 onConfirm = { link ->
                     onAction(ListAction.OnAddLinkConfirm(link))
                     showSheet = false
+                    onClipboardPromptDismiss()
                 },
             )
         }
@@ -118,5 +144,9 @@ fun ListScreenPreview() {
     ListScreen(
         state = ListState(),
         onAction = {},
+        clipboardUrl = "https://example.com",
+        showClipboardPrompt = true,
+        onClipboardPromptClick = {},
+        onClipboardPromptDismiss = {}
     )
 }

@@ -38,10 +38,11 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductBottomSheet(
+    initialLink: String = "",
     onDismissRequest: () -> Unit = {},
     onConfirm: (String) -> Unit = {},
 ) {
-    var linkText by remember { mutableStateOf("") }
+    var linkText by remember { mutableStateOf(initialLink) }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
