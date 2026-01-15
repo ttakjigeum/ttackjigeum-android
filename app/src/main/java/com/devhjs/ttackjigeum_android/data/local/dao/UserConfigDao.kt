@@ -14,7 +14,7 @@ interface UserConfigDao {
     @Query("SELECT * FROM user_configs WHERE product_id = :productId")
     suspend fun findById(productId: Long): UserConfigEntity?
 
-    @Query("SELECT * FROM user_configs")
+    @Query("SELECT * FROM user_configs ORDER BY product_id DESC")
     suspend fun getAll(): List<UserConfigEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
