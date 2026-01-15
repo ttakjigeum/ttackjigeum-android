@@ -2,6 +2,7 @@ package com.devhjs.ttackjigeum_android.core.di
 
 import androidx.room.Room
 import com.devhjs.ttackjigeum_android.data.local.database.AppDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -14,4 +15,5 @@ val databaseModule = module {
         ).build()
     }
     single { get<AppDatabase>().userConfigDao() }
+    single { FirebaseFirestore.getInstance() }
 }

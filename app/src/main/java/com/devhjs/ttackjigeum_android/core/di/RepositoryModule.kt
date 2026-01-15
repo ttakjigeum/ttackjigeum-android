@@ -17,7 +17,7 @@ val repositoryModule = module {
         if (BuildConfig.FLAVOR == "dev") {
             DevProductRepositoryImpl()
         } else {
-            ProdProductRepositoryImpl()
+            ProdProductRepositoryImpl(get())
         }
     }
     single<PriceHistoryRepository> {
