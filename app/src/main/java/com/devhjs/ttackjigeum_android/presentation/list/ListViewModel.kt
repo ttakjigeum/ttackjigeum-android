@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListViewModel(
-    private val searchProductsUseCase: SearchProductsUseCase
+    private val searchProductsUseCase: SearchProductsUseCase,
+    private val addProductUseCase: com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListState())
@@ -37,8 +38,18 @@ class ListViewModel(
                 // 알림 화면 이동 로직 등 처리
             }
             is ListAction.OnAddLinkConfirm -> {
-                // 링크 추가 로직 처리 (TODO)
-                loadProducts() // 리프레시 예시
+                viewModelScope.launch {
+                    _state.update { it.copy(isLoading = true) }
+                    when (val result = addProductUseCase(action.link)) {
+                        is Result.Success -> {
+                            loadProducts()
+                        }
+                        is Result.Error -> {
+                            _state.update { it.copy(isLoading = false) }
+                            _event.emit(ListEvent.ShowToast("상품 등록에 실패했습니다."))
+                        }
+                    }
+                }
             }
             is ListAction.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = action.query) }

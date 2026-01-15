@@ -8,6 +8,6 @@ import org.koin.dsl.module
 
 
 val viewModelModule = module {
-    viewModel { ListViewModel(get()) }
+    viewModel { ListViewModel(get(), get()) }
     viewModel { (route: Long) -> DetailViewModel(route, get(), get(),get(),get()) }
 }

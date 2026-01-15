@@ -4,7 +4,7 @@ import com.devhjs.ttackjigeum_android.domain.model.PriceHistory
 import com.devhjs.ttackjigeum_android.domain.model.Product
 
 object MockData {
-    val MockProducts = listOf(
+    val MockProducts = mutableListOf(
         Product(
             id = 1L,
             name = "신라면 (5봉)",

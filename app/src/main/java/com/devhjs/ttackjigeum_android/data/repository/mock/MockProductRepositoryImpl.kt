@@ -16,4 +16,8 @@ class MockProductRepositoryImpl : ProductRepository {
     override suspend fun getProductByIds(ids: List<Long>): List<Product> {
         return MockData.MockProducts.filter { ids.contains(it.id) }
     }
+
+    override suspend fun addProduct(product: Product) {
+        MockData.MockProducts.add(product)
+    }
 }
