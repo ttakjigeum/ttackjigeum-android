@@ -6,12 +6,12 @@ import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 import com.devhjs.ttackjigeum_android.domain.parser.ProductParser
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class AddProductUseCase(
     private val productRepository: ProductRepository,
-    private val userConfigRepository: RoomUserConfigRepository,
     private val productParser: ProductParser
+    private val userConfigRepository: UserConfigRepository,
 ) {
     suspend operator fun invoke(url: String): Result<Unit, DataError> {
         return try {
