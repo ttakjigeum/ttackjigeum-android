@@ -33,4 +33,8 @@ class RoomUserConfigRepositoryImpl(
     override suspend fun deleteUserConfig(userConfig: UserConfig) {
         userConfigDao.delete(userConfig.toEntity())
     }
+
+    override suspend fun updateTargetPrice(productId: Long, targetPrice: Int) {
+        userConfigDao.updateTargetPrice(productId, targetPrice)
+    }
 }

@@ -36,7 +36,8 @@ import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 fun TargetPriceSlider(
     modifier: Modifier = Modifier,
     targetPrice: Int,
-    currentPrice: Int
+    currentPrice: Int,
+    onTargetPriceChange: (Int) -> Unit
 ) {
     // Determine min/max range based on prices
     // Example logic: Min = 0, Max = Current Price * 1.5 (or similar)
@@ -95,6 +96,9 @@ fun TargetPriceSlider(
             Slider(
                 value = sliderValue,
                 onValueChange = { sliderValue = it },
+                onValueChangeFinished = {
+                    onTargetPriceChange(sliderValue.toInt())
+                },
                 valueRange = minPrice.toFloat()..maxPrice.toFloat(),
                 thumb = {
                     // Custom Thumb
@@ -148,6 +152,7 @@ fun TargetPriceSlider(
 fun TargetPriceSliderPreview() {
     TargetPriceSlider(
         targetPrice = 320000,
-        currentPrice = 348000
+        currentPrice = 348000,
+        onTargetPriceChange = {}
     )
 }

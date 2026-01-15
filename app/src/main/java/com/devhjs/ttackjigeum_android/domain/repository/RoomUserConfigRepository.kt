@@ -9,4 +9,5 @@ interface RoomUserConfigRepository {
     suspend fun updateUserConfig(userConfig: UserConfig)
     suspend fun deleteUserConfig(productId: Long)
     suspend fun deleteUserConfig(userConfig: UserConfig)
+    suspend fun updateTargetPrice(productId: Long, targetPrice: Int)
 }

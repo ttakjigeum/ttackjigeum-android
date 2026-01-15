@@ -4,4 +4,5 @@ sealed interface DetailAction {
     data object OnBackClick : DetailAction
     data object OnNotificationToggle : DetailAction
     data object OnPurchaseClick : DetailAction
+    data class OnTargetPriceChange(val price: Int) : DetailAction
 }
