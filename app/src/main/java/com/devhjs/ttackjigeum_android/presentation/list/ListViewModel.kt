@@ -6,11 +6,13 @@ import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
+import com.devhjs.ttackjigeum_android.core.util.ShareIntentHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,11 @@ class ListViewModel(
 
     init {
         loadProducts()
+        viewModelScope.launch {
+            ShareIntentHandler.sharedUrl.collectLatest { url ->
+                onAction(ListAction.OnAddLinkConfirm(url))
+            }
+        }
     }
 
     fun onAction(action: ListAction) {
