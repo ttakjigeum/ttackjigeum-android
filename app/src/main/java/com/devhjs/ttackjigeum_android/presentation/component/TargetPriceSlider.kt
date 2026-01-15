@@ -83,7 +83,7 @@ fun TargetPriceSlider(
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
                     Text(
-                        text = "₩${sliderValue.toInt()}",
+                        text = "₩${String.format("%,d", sliderValue.toInt())}",
                         style = AppTextStyles.mediumTextBold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
                     )
@@ -131,13 +131,13 @@ fun TargetPriceSlider(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "₩$minPrice",
+                    text = "₩${String.format("%,d", minPrice)}",
                     style = AppTextStyles.smallerTextBold.copy(
                         color = AppColors.TextGray2
                     )
                 )
                 Text(
-                    text = "₩$maxPrice",
+                    text = "₩${String.format("%,d", maxPrice)}",
                     style = AppTextStyles.smallerTextBold.copy(
                         color = AppColors.TextGray2
                     )
