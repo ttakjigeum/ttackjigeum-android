@@ -1,23 +1,25 @@
-package com.devhjs.ttackjigeum_android.data.repository.mock
+package com.devhjs.ttackjigeum_android.data.repository
 
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
 
-
-class MockProductRepositoryImpl : ProductRepository {
+class ProdProductRepositoryImpl : ProductRepository {
     override suspend fun getProducts(): List<Product> {
-        return MockData.MockProducts
+        // TODO: Implement Firestore fetching
+        return emptyList()
     }
 
     override suspend fun getProductById(id: Long): Product? {
-        return MockData.MockProducts.find { it.id == id }
+        // TODO: Implement Firestore fetching
+        return null
     }
 
     override suspend fun getProductByIds(ids: List<Long>): List<Product> {
-        return MockData.MockProducts.filter { ids.contains(it.id) }
+        // TODO: Implement Firestore fetching
+        return emptyList()
     }
 
     override suspend fun addProduct(product: Product) {
-        MockData.MockProducts.add(product)
+        // TODO: Implement Firestore adding
     }
 }
