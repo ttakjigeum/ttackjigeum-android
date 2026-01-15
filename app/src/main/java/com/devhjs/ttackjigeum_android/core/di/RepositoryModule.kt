@@ -4,12 +4,12 @@ import com.devhjs.ttackjigeum_android.BuildConfig
 import com.devhjs.ttackjigeum_android.data.repository.DevPriceHistoryRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.DevProductRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.DevUserConfigRepositoryImpl
-import com.devhjs.ttackjigeum_android.data.repository.ProdPriceHistoryRepositoryImpl
+import com.devhjs.ttackjigeum_android.data.repository.FirestorePriceHistoryRepositoryImpl
+import com.devhjs.ttackjigeum_android.data.repository.FirestoreUserConfigRepositoryImpl
 import com.devhjs.ttackjigeum_android.data.repository.ProdProductRepositoryImpl
-import com.devhjs.ttackjigeum_android.data.repository.ProdUserConfigRepositoryImpl
 import com.devhjs.ttackjigeum_android.domain.repository.PriceHistoryRepository
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
@@ -24,14 +24,14 @@ val repositoryModule = module {
         if (BuildConfig.FLAVOR == "dev") {
             DevPriceHistoryRepositoryImpl()
         } else {
-            ProdPriceHistoryRepositoryImpl()
+            FirestorePriceHistoryRepositoryImpl(get())
         }
     }
-    single<RoomUserConfigRepository> {
+    single<UserConfigRepository> {
         if (BuildConfig.FLAVOR == "dev") {
             DevUserConfigRepositoryImpl(get())
         } else {
-            ProdUserConfigRepositoryImpl(get())
+            FirestoreUserConfigRepositoryImpl(get())
         }
     }
 }

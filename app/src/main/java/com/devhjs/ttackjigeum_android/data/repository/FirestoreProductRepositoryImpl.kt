@@ -8,9 +8,10 @@ import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-class ProdProductRepositoryImpl(
+class FirestoreProductRepositoryImpl(
     private val firestore: FirebaseFirestore
 ) : ProductRepository {
+
 
     private val collectionRegex = "products"
 
@@ -32,7 +33,7 @@ class ProdProductRepositoryImpl(
                 .whereEqualTo("id", id)
                 .get()
                 .await()
-            
+
             if (!snapshot.isEmpty) {
                 snapshot.documents[0].toObject(ProductDto::class.java)?.toDomain()
             } else {
@@ -53,7 +54,7 @@ class ProdProductRepositoryImpl(
                 .whereIn("id", ids)
                 .get()
                 .await()
-                
+
             snapshot.documents.mapNotNull { document ->
                 document.toObject(ProductDto::class.java)?.toDomain()
             }

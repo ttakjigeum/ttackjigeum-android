@@ -2,7 +2,7 @@ package com.devhjs.ttackjigeum_android.domain.repository
 
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 
-interface RoomUserConfigRepository {
+interface UserConfigRepository {
     suspend fun getUserConfig(productId: Long): UserConfig?
     suspend fun getAllUserConfigs(): List<UserConfig>
     suspend fun saveUserConfig(userConfig: UserConfig)

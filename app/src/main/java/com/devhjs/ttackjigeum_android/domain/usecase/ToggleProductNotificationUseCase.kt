@@ -1,10 +1,10 @@
 package com.devhjs.ttackjigeum_android.domain.usecase
 
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class ToggleProductNotificationUseCase(
-    private val repository: RoomUserConfigRepository
+    private val repository: UserConfigRepository
 ) {
     suspend operator fun invoke(productId: Long, currentTargetPrice: Int) {
         val currentConfig = repository.getUserConfig(productId)

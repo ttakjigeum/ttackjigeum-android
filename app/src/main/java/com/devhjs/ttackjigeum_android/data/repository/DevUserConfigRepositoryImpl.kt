@@ -5,11 +5,11 @@ import com.devhjs.ttackjigeum_android.data.mapper.toDomain
 import com.devhjs.ttackjigeum_android.data.mapper.toEntity
 import com.devhjs.ttackjigeum_android.data.repository.mock.MockData
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
-import com.devhjs.ttackjigeum_android.domain.repository.RoomUserConfigRepository
+import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 
 class DevUserConfigRepositoryImpl(
     private val userConfigDao: UserConfigDao,
-) : RoomUserConfigRepository {
+) : UserConfigRepository {
 
     override suspend fun getUserConfig(productId: Long): UserConfig? {
         return userConfigDao.findById(productId)?.toDomain()
