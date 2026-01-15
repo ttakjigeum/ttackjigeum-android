@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -35,11 +34,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.devhjs.ttackjigeum_android.R
+import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun ProductCardItem(
-    product: com.devhjs.ttackjigeum_android.domain.model.Product,
+    product: Product,
     onClick: () -> Unit = {},
 ) {
     val badgeType = when {
@@ -51,26 +51,25 @@ fun ProductCardItem(
     Card(
         onClick = onClick,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp), // 카드 둥근 모서리
         colors = CardDefaults.cardColors(containerColor = AppColors.White), // 배경 흰색
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp) // 살짝 그림자
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp), // 살짝 그림자
     ) {
         Row(
             modifier = Modifier
                 .padding(16.dp) // 카드 내부 여백
-                .fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // 1. 좌측 상품 이미지 (Coil AsyncImage 사용)
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f) // 정사각형
+                    .size(88.dp)
+                    // .aspectRatio(1f) // 정사각형 (size로 대체)
                     .clip(RoundedCornerShape(12.dp))
                     .background(AppColors.IconGray2), // 배경색
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 if (product.imageUrl.isNotEmpty()) {
                     AsyncImage(
@@ -79,14 +78,14 @@ fun ProductCardItem(
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
                         error = painterResource(R.drawable.ic_noimage),
-                        placeholder = painterResource(R.drawable.ic_noimage)
+                        placeholder = painterResource(R.drawable.ic_noimage),
                     )
                 } else {
                     Image(
                         painter = painterResource(R.drawable.ic_noimage),
                         contentDescription = "이미지 없음",
                         modifier = Modifier.size(24.dp),
-                        colorFilter = ColorFilter.tint(AppColors.IconGray1)
+                        colorFilter = ColorFilter.tint(AppColors.IconGray1),
                     )
                 }
             }
@@ -96,7 +95,7 @@ fun ProductCardItem(
             // 2. 우측 텍스트 영역
             Column(
                 modifier = Modifier.weight(1f), // 남은 공간 다 차지하기
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 // (1) 상품명
                 Text(
@@ -104,17 +103,19 @@ fun ProductCardItem(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    maxLines = 2, // 두 줄까지만 표시
-                    overflow = TextOverflow.Ellipsis // 넘치면 ... 처리
+                    maxLines = 1, // 한 줄까지만 표시
+                    overflow = TextOverflow.Ellipsis, // 넘치면 ... 처리
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // (2) 목표가
                 Text(
-                    text = "목표가: ₩${java.text.NumberFormat.getInstance().format(product.targetPrice)}",
+                    text = "목표가: ₩${
+                        java.text.NumberFormat.getInstance().format(product.targetPrice)
+                    }",
                     fontSize = 14.sp,
-                    color = Color.Gray
+                    color = Color.Gray,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -123,19 +124,21 @@ fun ProductCardItem(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween // 양쪽 끝 정렬
+                    horizontalArrangement = Arrangement.SpaceBetween, // 양쪽 끝 정렬
                 ) {
                     // 현재 가격
                     Text(
-                        text = "₩${java.text.NumberFormat.getInstance().format(product.currentPrice)}",
+                        text = "₩${
+                            java.text.NumberFormat.getInstance().format(product.currentPrice)
+                        }",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (badgeType == BadgeType.NO_CHANGE) AppColors.TextGray1 else AppColors.Primary
+                        color = if (badgeType == BadgeType.NO_CHANGE) AppColors.TextGray1 else AppColors.Primary,
                     )
 
                     // 배지
                     ProductBadge(
-                        type = badgeType
+                        type = badgeType,
                     )
                 }
             }
@@ -146,7 +149,7 @@ fun ProductCardItem(
 @Preview(showBackground = true)
 @Composable
 fun PreviewProductCardItem() {
-    val mockProduct = com.devhjs.ttackjigeum_android.domain.model.Product(
+    val mockProduct = Product(
         id = 1L,
         name = "소니 WH-1000XM5 무선 노이즈 캔셀링 헤드폰",
         originalPrice = 350000,
@@ -156,7 +159,7 @@ fun PreviewProductCardItem() {
         averagePrice = 330000,
         isFavorite = false,
         url = "",
-        imageUrl = ""
+        imageUrl = "",
     )
     ProductCardItem(product = mockProduct)
 }

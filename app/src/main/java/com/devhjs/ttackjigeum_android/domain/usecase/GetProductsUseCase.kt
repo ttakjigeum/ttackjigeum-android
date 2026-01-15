@@ -18,25 +18,16 @@ class GetProductsUseCase(
             val productIds = userConfigs.map { it.productId }
             val products = productRepository.getProductByIds(productIds)
 
-            val productsWithPrice = products.map { product ->
-                val priceHistories = priceHistoryRepository.getPriceHistories(product.id)
-                val lowestPrice = if (priceHistories.isNotEmpty()) {
-                    priceHistories.minOf { it.price }
+            val updatedProducts = products.map { product ->
+                val config = userConfigs.find { it.productId == product.id }
+                if (config != null) {
+                    product.copy(targetPrice = config.targetPrice)
                 } else {
-                    product.currentPrice
+                    product
                 }
-                val averagePrice = if (priceHistories.isNotEmpty()) {
-                    priceHistories.map { it.price }.average().toInt()
-                } else {
-                    product.currentPrice
-                }
-                product.copy(
-                    lowestPrice = lowestPrice,
-                    averagePrice = averagePrice
-                )
             }
 
-            Result.Success(productsWithPrice)
+            Result.Success(updatedProducts)
         } catch (e: Exception) {
             Result.Error(DataError.Network.UNKNOWN)
         }
