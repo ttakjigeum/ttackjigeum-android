@@ -8,6 +8,7 @@ import com.devhjs.ttackjigeum_android.domain.usecase.GetPriceHistoryUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetUserConfigUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.ToggleProductNotificationUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.UpdateTargetPriceUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,7 +21,8 @@ class DetailViewModel(
     private val getProductUseCase: GetProductUseCase,
     private val getPriceHistoryUseCase: GetPriceHistoryUseCase,
     private val getUserConfigUseCase: GetUserConfigUseCase,
-    private val toggleProductNotificationUseCase: ToggleProductNotificationUseCase
+    private val toggleProductNotificationUseCase: ToggleProductNotificationUseCase,
+    private val updateTargetPriceUseCase: UpdateTargetPriceUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DetailState(isLoading = true))
@@ -42,11 +44,17 @@ class DetailViewModel(
             val userConfig = getUserConfigUseCase(productId)
 
             if (productResult is Result.Success && historyResult is Result.Success) {
-                val product = productResult.data
+                val fetchedProduct = productResult.data
+                val finalProduct = if (userConfig != null && userConfig.targetPrice > 0) {
+                     fetchedProduct.copy(targetPrice = userConfig.targetPrice)
+                } else {
+                     fetchedProduct
+                }
+
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        product = product,
+                        product = finalProduct,
                         priceHistories = historyResult.data,
                         isNotificationActive = userConfig?.notificationEnabled ?: false
                     )
@@ -80,6 +88,20 @@ class DetailViewModel(
                     viewModelScope.launch {
                         _event.emit(DetailEvent.OpenUrl(url))
                     }
+                }
+            }
+            is DetailAction.OnTargetPriceChange -> {
+                viewModelScope.launch {
+                    updateTargetPriceUseCase(productId, action.price)
+                    // Optimistic update or reload config?
+                    // For now, let's update the local state product's target price to reflect change immediately if needed,
+                    // but the Slider owns its own state mostly.
+                    // However, we should keep the state in sync.
+                     _state.update { currentState ->
+                         currentState.copy(
+                             product = currentState.product?.copy(targetPrice = action.price)
+                         )
+                     }
                 }
             }
         }

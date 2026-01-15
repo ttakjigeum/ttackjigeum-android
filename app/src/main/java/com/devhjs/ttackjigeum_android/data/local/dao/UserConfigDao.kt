@@ -31,4 +31,7 @@ interface UserConfigDao {
 
     @Query("DELETE FROM user_configs WHERE product_id IN (:productIds)")
     suspend fun deleteByIds(productIds: List<Long>)
+
+    @Query("UPDATE user_configs SET target_price = :targetPrice WHERE product_id = :productId")
+    suspend fun updateTargetPrice(productId: Long, targetPrice: Int)
 }

@@ -37,4 +37,12 @@ class MockUserConfigRepositoryImpl : RoomUserConfigRepository {
     override suspend fun deleteUserConfig(userConfig: UserConfig) {
         userConfigs.removeAll { it.productId == userConfig.productId }
     }
+
+    override suspend fun updateTargetPrice(productId: Long, targetPrice: Int) {
+        val index = userConfigs.indexOfFirst { it.productId == productId }
+        if (index != -1) {
+            val currentConfig = userConfigs[index]
+            userConfigs[index] = currentConfig.copy(targetPrice = targetPrice)
+        }
+    }
 }

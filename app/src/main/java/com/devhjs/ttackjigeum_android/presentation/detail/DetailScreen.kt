@@ -74,7 +74,8 @@ fun DetailScreen(
             state.product?.let { product ->
                 TargetPriceSlider(
                     targetPrice = product.targetPrice,
-                    currentPrice = product.currentPrice
+                    currentPrice = product.currentPrice,
+                    onTargetPriceChange = { onAction(DetailAction.OnTargetPriceChange(it)) }
                 )
             }
             
