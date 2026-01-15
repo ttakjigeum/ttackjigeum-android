@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +21,7 @@ import com.devhjs.ttackjigeum_android.presentation.component.HistoryGraph
 import com.devhjs.ttackjigeum_android.presentation.component.PriceInfoCard
 import com.devhjs.ttackjigeum_android.presentation.component.TargetPriceSlider
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
+import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 
 @Composable
 fun DetailScreen(
@@ -51,9 +53,16 @@ fun DetailScreen(
                     name = product.name,
                     imageUrl = product.imageUrl
                 )
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
+
+                Text(
+                    text = product.name,
+                    style = AppTextStyles.largeTextBold,
+                    color = AppColors.Black,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 PriceInfoCard(
                     currentPrice = product.currentPrice,
                     originalPrice = product.originalPrice.takeIf { it > product.currentPrice }, // Validate original price
@@ -62,15 +71,15 @@ fun DetailScreen(
                     averagePrice = product.averagePrice
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(24.dp))
-            
+
             HistoryGraph(
                 histories = state.priceHistories
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             state.product?.let { product ->
                 TargetPriceSlider(
                     targetPrice = product.targetPrice,
@@ -78,7 +87,7 @@ fun DetailScreen(
                     onTargetPriceChange = { onAction(DetailAction.OnTargetPriceChange(it)) }
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(100.dp)) // Extra space for bottom bar
         }
     }

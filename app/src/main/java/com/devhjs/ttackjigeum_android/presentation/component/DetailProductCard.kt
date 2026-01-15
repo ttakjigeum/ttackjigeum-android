@@ -40,19 +40,6 @@ fun DetailProductCard(
                 .fillMaxWidth()
                 .aspectRatio(1.2f) // Adjust aspect ratio as needed
         ) {
-            // Background Gradient
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .aspectRatio(1.2f)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f))
-                        )
-                    )
-            )
-
             SubcomposeAsyncImage(
                 model = imageUrl,
                 contentDescription = name,
@@ -84,19 +71,6 @@ fun DetailProductCard(
                     )
                 }
             )
-
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(20.dp)
-            ) {
-                Text(
-                    text = name,
-                    style = AppTextStyles.largeTextBold.copy(
-                        color = AppColors.White
-                    )
-                )
-            }
         }
     }
 }
