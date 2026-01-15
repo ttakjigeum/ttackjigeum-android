@@ -52,7 +52,7 @@ fun ProductCardItem(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp), // 리스트 간격
+            .height(120.dp),
         shape = RoundedCornerShape(16.dp), // 카드 둥근 모서리
         colors = CardDefaults.cardColors(containerColor = AppColors.White), // 배경 흰색
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp) // 살짝 그림자
@@ -60,8 +60,7 @@ fun ProductCardItem(
         Row(
             modifier = Modifier
                 .padding(16.dp) // 카드 내부 여백
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min),
+                .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 1. 좌측 상품 이미지 (Coil AsyncImage 사용)
@@ -96,7 +95,8 @@ fun ProductCardItem(
 
             // 2. 우측 텍스트 영역
             Column(
-                modifier = Modifier.weight(1f) // 남은 공간 다 차지하기
+                modifier = Modifier.weight(1f), // 남은 공간 다 차지하기
+                verticalArrangement = Arrangement.Center
             ) {
                 // (1) 상품명
                 Text(

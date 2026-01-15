@@ -6,4 +6,5 @@ sealed interface ListAction {
     data class OnProductClick(val product: Product) : ListAction
     data object OnNotificationClick : ListAction
     data class OnAddLinkConfirm(val link: String) : ListAction
+    data class OnSearchQueryChange(val query: String) : ListAction
 }

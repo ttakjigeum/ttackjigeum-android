@@ -3,7 +3,7 @@ package com.devhjs.ttackjigeum_android.presentation.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devhjs.ttackjigeum_android.core.util.Result
-import com.devhjs.ttackjigeum_android.domain.usecase.GetProductsUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ListViewModel(
-    private val getProductsUseCase: GetProductsUseCase
+    private val searchProductsUseCase: SearchProductsUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListState())
@@ -40,6 +40,10 @@ class ListViewModel(
                 // 링크 추가 로직 처리 (TODO)
                 loadProducts() // 리프레시 예시
             }
+            is ListAction.OnSearchQueryChange -> {
+                _state.update { it.copy(searchQuery = action.query) }
+                loadProducts()
+            }
         }
     }
 
@@ -47,7 +51,7 @@ class ListViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             
-            when (val result = getProductsUseCase()) {
+            when (val result = searchProductsUseCase(_state.value.searchQuery)) {
                 is Result.Success -> {
                     _state.update { 
                         it.copy(
