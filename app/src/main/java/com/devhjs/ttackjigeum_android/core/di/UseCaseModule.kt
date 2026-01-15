@@ -11,8 +11,8 @@ import com.devhjs.ttackjigeum_android.domain.usecase.UpdateTargetPriceUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
-    single { GetProductUseCase(get()) }
-    single { GetProductsUseCase(get(), get()) }
+    single { GetProductUseCase(get(), get()) }
+    single { GetProductsUseCase(get(), get(), get()) }
     single { GetPriceHistoryUseCase(get()) }
     single { SearchProductsUseCase(get()) }
     single { GetUserConfigUseCase(get()) }
