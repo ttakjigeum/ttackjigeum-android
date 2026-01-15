@@ -6,6 +6,8 @@ import com.devhjs.ttackjigeum_android.core.navigation.Route
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.usecase.GetPriceHistoryUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetProductUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.GetUserConfigUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.ToggleProductNotificationUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -16,7 +18,9 @@ import kotlinx.coroutines.launch
 class DetailViewModel(
     private val productId: Long,
     private val getProductUseCase: GetProductUseCase,
-    private val getPriceHistoryUseCase: GetPriceHistoryUseCase
+    private val getPriceHistoryUseCase: GetPriceHistoryUseCase,
+    private val getUserConfigUseCase: GetUserConfigUseCase,
+    private val toggleProductNotificationUseCase: ToggleProductNotificationUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DetailState(isLoading = true))
@@ -35,6 +39,7 @@ class DetailViewModel(
 
             val productResult = getProductUseCase(productId)
             val historyResult = getPriceHistoryUseCase(productId)
+            val userConfig = getUserConfigUseCase(productId)
 
             if (productResult is Result.Success && historyResult is Result.Success) {
                 val product = productResult.data
@@ -43,7 +48,7 @@ class DetailViewModel(
                         isLoading = false,
                         product = product,
                         priceHistories = historyResult.data,
-                        isNotificationActive = product.isFavorite
+                        isNotificationActive = userConfig?.notificationEnabled ?: false
                     )
                 }
             } else {
@@ -61,7 +66,14 @@ class DetailViewModel(
                 }
             }
             is DetailAction.OnNotificationToggle -> {
-                _state.update { it.copy(isNotificationActive = !it.isNotificationActive) }
+                viewModelScope.launch {
+                    val currentProduct = _state.value.product ?: return@launch
+                    toggleProductNotificationUseCase(currentProduct.id, currentProduct.targetPrice)
+                    
+                    // Toggle execution complete, update UI state
+                    val updatedConfig = getUserConfigUseCase(currentProduct.id)
+                    _state.update { it.copy(isNotificationActive = updatedConfig?.notificationEnabled ?: false) }
+                }
             }
             is DetailAction.OnPurchaseClick -> {
                 _state.value.product?.url?.let { url ->
