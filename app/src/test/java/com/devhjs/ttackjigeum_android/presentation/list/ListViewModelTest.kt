@@ -11,11 +11,16 @@ import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -40,7 +45,18 @@ class ListViewModelTest {
         searchProductsUseCase = mockk(relaxed = true)
         addProductUseCase = mockk(relaxed = true)
         deleteProductUseCase = mockk(relaxed = true)
-        ShareIntentHandler.consumeUrl()
+
+        // Mock ShareIntentHandler to prevent state leakage between tests
+        mockkObject(ShareIntentHandler)
+        val testSharedUrl = MutableStateFlow<String?>(null)
+        every { ShareIntentHandler.sharedUrl } returns testSharedUrl
+        every { ShareIntentHandler.emitUrl(any()) } answers { testSharedUrl.value = firstArg() }
+        every { ShareIntentHandler.consumeUrl() } answers { testSharedUrl.value = null }
+    }
+
+    @After
+    fun tearDown() {
+        unmockkObject(ShareIntentHandler)
     }
 
     private fun initViewModel() {
