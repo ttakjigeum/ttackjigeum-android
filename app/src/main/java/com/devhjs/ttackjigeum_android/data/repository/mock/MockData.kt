@@ -44,6 +44,19 @@ object MockData {
         ),
     )
 
+    val mockProduct = Product(
+        id = 123L,
+        name = "두바이쫀득쿠키 6구 세트 (300g) 두바이쫀득모찌 쫀득쿠키택배 두바이쫀득볼 에이미미버터",
+        originalPrice = 39800,
+        currentPrice = 37800,
+        targetPrice = 36000,
+        lowestPrice = 36800,
+        averagePrice = 37800,
+        isFavorite = false,
+        url = "https://smartstore.naver.com/mang9dessert/products/12576943701",
+        imageUrl = "https://shop-phinf.pstatic.net/20251105_269/1762347066392sk1VA_JPEG/38808412204101421_509762020.jpg?type=m1000_pd",
+    )
+
     val MockPriceHistories = mapOf(
         1L to listOf(
             PriceHistory("2024-01-10", 4500),
