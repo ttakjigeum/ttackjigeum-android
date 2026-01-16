@@ -1,6 +1,7 @@
 package com.devhjs.ttackjigeum_android.core.di
 
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetPriceHistoryUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.GetProductsUseCase
@@ -19,4 +20,5 @@ val useCaseModule = module {
     single { ToggleProductNotificationUseCase(get()) }
     single { AddProductUseCase(get(), get(), get()) }
     single { UpdateTargetPriceUseCase(get()) }
+    single { DeleteProductUseCase(get(), get()) }
 }

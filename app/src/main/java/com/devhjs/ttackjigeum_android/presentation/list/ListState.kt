@@ -7,5 +7,6 @@ import com.devhjs.ttackjigeum_android.domain.model.Product
 data class ListState(
     val products: List<Product> = emptyList(),
     val isLoading: Boolean = false,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val productToDelete: Product? = null
 )

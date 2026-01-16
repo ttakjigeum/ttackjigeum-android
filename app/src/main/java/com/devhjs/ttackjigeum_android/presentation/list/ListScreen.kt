@@ -93,6 +93,7 @@ fun ListScreen(
                         ProductCardItem(
                             product = product,
                             onClick = { onAction(ListAction.OnProductClick(product)) },
+                            onSwipeDelete = { onAction(ListAction.OnSwipeDelete(product)) }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                     }
@@ -133,6 +134,13 @@ fun ListScreen(
                     showSheet = false
                     onClipboardPromptDismiss()
                 },
+            )
+        }
+
+        if (state.productToDelete != null) {
+            com.devhjs.ttackjigeum_android.presentation.component.DeleteConfirmationDialog(
+                onDismissRequest = { onAction(ListAction.OnDeleteCancel) },
+                onConfirm = { onAction(ListAction.OnDeleteConfirm) }
             )
         }
     }
