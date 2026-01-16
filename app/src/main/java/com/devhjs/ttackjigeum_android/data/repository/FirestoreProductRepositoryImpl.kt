@@ -73,4 +73,19 @@ class FirestoreProductRepositoryImpl(
             e.printStackTrace()
         }
     }
+
+    override suspend fun deleteProduct(id: Long) {
+        try {
+            val snapshot = firestore.collection(collectionRegex)
+                .whereEqualTo("id", id)
+                .get()
+                .await()
+
+            for (document in snapshot.documents) {
+                document.reference.delete().await()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

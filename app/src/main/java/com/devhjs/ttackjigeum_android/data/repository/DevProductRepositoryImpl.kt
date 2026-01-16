@@ -20,4 +20,8 @@ class DevProductRepositoryImpl : ProductRepository {
     override suspend fun addProduct(product: Product) {
         MockData.MockProducts.add(product)
     }
+
+    override suspend fun deleteProduct(id: Long) {
+        MockData.MockProducts.removeIf { it.id == id }
+    }
 }

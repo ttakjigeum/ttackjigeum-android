@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
 import com.devhjs.ttackjigeum_android.core.util.ShareIntentHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class ListViewModel(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val addProductUseCase: AddProductUseCase,
+    private val deleteProductUseCase: DeleteProductUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListState())
@@ -66,6 +68,21 @@ class ListViewModel(
                 _state.update { it.copy(searchQuery = action.query) }
                 loadProducts()
             }
+            is ListAction.OnSwipeDelete -> {
+                _state.update { it.copy(productToDelete = action.product) }
+            }
+            is ListAction.OnDeleteConfirm -> {
+                val product = _state.value.productToDelete
+                if (product != null) {
+                    viewModelScope.launch {
+                        _state.update { it.copy(isLoading = true, productToDelete = null) }
+                        deleteProduct(product.id)
+                    }
+                }
+            }
+            is ListAction.OnDeleteCancel -> {
+                _state.update { it.copy(productToDelete = null) }
+            }
         }
     }
 
@@ -105,6 +122,19 @@ class ListViewModel(
                     else -> "상품 등록에 실패했습니다."
                 }
                 _event.emit(ListEvent.ShowToast(msg))
+            }
+        }
+    }
+
+    private suspend fun deleteProduct(productId: Long) {
+        when (deleteProductUseCase(productId)) {
+            is Result.Success -> {
+                loadProductsInternal()
+                _event.emit(ListEvent.ShowToast("상품이 삭제되었습니다."))
+            }
+            is Result.Error -> {
+                _state.update { it.copy(isLoading = false) }
+                _event.emit(ListEvent.ShowToast("상품 삭제에 실패했습니다."))
             }
         }
     }

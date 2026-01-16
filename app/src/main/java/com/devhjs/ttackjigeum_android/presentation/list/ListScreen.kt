@@ -93,6 +93,7 @@ fun ListScreen(
                         ProductCardItem(
                             product = product,
                             onClick = { onAction(ListAction.OnProductClick(product)) },
+                            onSwipeDelete = { onAction(ListAction.OnSwipeDelete(product)) }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                     }
@@ -133,6 +134,24 @@ fun ListScreen(
                     showSheet = false
                     onClipboardPromptDismiss()
                 },
+            )
+        }
+
+        if (state.productToDelete != null) {
+            androidx.compose.material3.AlertDialog(
+                onDismissRequest = { onAction(ListAction.OnDeleteCancel) },
+                title = { Text("상품 삭제") },
+                text = { Text("정말 삭제하시겠습니까?") },
+                confirmButton = {
+                    androidx.compose.material3.TextButton(onClick = { onAction(ListAction.OnDeleteConfirm) }) {
+                        Text("삭제", color = androidx.compose.ui.graphics.Color(0xFFDC2626))
+                    }
+                },
+                dismissButton = {
+                    androidx.compose.material3.TextButton(onClick = { onAction(ListAction.OnDeleteCancel) }) {
+                        Text("취소")
+                    }
+                }
             )
         }
     }
