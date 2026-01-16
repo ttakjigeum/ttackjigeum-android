@@ -138,20 +138,9 @@ fun ListScreen(
         }
 
         if (state.productToDelete != null) {
-            androidx.compose.material3.AlertDialog(
+            com.devhjs.ttackjigeum_android.presentation.component.DeleteConfirmationDialog(
                 onDismissRequest = { onAction(ListAction.OnDeleteCancel) },
-                title = { Text("상품 삭제") },
-                text = { Text("정말 삭제하시겠습니까?") },
-                confirmButton = {
-                    androidx.compose.material3.TextButton(onClick = { onAction(ListAction.OnDeleteConfirm) }) {
-                        Text("삭제", color = androidx.compose.ui.graphics.Color(0xFFDC2626))
-                    }
-                },
-                dismissButton = {
-                    androidx.compose.material3.TextButton(onClick = { onAction(ListAction.OnDeleteCancel) }) {
-                        Text("취소")
-                    }
-                }
+                onConfirm = { onAction(ListAction.OnDeleteConfirm) }
             )
         }
     }
