@@ -10,7 +10,6 @@ class DeleteProductUseCase(
 ) {
     suspend operator fun invoke(productId: Long): Result<Unit, Unit> {
         return try {
-            productRepository.deleteProduct(productId)
             userConfigRepository.deleteUserConfig(productId)
             Result.Success(Unit)
         } catch (e: Exception) {
