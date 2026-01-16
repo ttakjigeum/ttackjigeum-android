@@ -2,12 +2,13 @@ package com.devhjs.ttackjigeum_android.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devhjs.ttackjigeum_android.core.manager.ClipboardStateManager
 import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
+import com.devhjs.ttackjigeum_android.core.util.ShareIntentHandler
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
-import com.devhjs.ttackjigeum_android.core.util.ShareIntentHandler
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 class ListViewModel(
     private val searchProductsUseCase: SearchProductsUseCase,
     private val addProductUseCase: AddProductUseCase,
-    private val deleteProductUseCase: DeleteProductUseCase
+    private val deleteProductUseCase: DeleteProductUseCase,
+    private val clipboardStateManager: ClipboardStateManager
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ListState())
@@ -113,6 +115,7 @@ class ListViewModel(
     private suspend fun handleOnAddLinkConfirm(link: String) {
         when (val result = addProductUseCase(link)) {
             is Result.Success -> {
+                clipboardStateManager.markUrlProcessed(link)
                 loadProductsInternal()
             }
             is Result.Error -> {
@@ -137,5 +140,12 @@ class ListViewModel(
                 _event.emit(ListEvent.ShowToast("상품 삭제에 실패했습니다."))
             }
         }
+    }
+    fun shouldShowClipboardPrompt(url: String): Boolean {
+        return clipboardStateManager.shouldShowSnackbar(url)
+    }
+
+    fun setClipboardDismissed(url: String) {
+        clipboardStateManager.setDismissed(url)
     }
 }

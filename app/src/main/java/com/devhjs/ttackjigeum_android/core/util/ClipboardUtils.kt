@@ -6,9 +6,9 @@ import android.content.Context
 object ClipboardUtils {
     fun getClipboardUrl(context: Context): String? {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        if (clipboard.hasPrimaryClip() && clipboard.primaryClipDescription?.hasMimeType("text/plain") == true) {
+        if (clipboard.hasPrimaryClip()) {
             val item = clipboard.primaryClip?.getItemAt(0)
-            val text = item?.text?.toString()
+            val text = item?.coerceToText(context)?.toString()
             if (!text.isNullOrBlank()) {
                 return extractUrl(text)
             }

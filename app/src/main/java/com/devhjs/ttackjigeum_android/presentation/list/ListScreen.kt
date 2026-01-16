@@ -35,7 +35,8 @@ fun ListScreen(
     clipboardUrl: String?,
     showClipboardPrompt: Boolean,
     onClipboardPromptClick: () -> Unit,
-    onClipboardPromptDismiss: () -> Unit,
+    onHideClipboardPrompt: () -> Unit,
+    onDismissClipboardForever: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
 
@@ -47,7 +48,7 @@ fun ListScreen(
         floatingActionButton = {
             CustomFloatingActionButton(
                 onClick = {
-                    onClipboardPromptDismiss()
+                    onHideClipboardPrompt()
                     showSheet = true
                 },
             )
@@ -110,7 +111,7 @@ fun ListScreen(
                             onClipboardPromptClick()
                             showSheet = true
                         },
-                        onDismissClick = onClipboardPromptDismiss,
+                        onDismissClick = onDismissClipboardForever,
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .padding(bottom = 90.dp)
@@ -124,12 +125,12 @@ fun ListScreen(
                 initialLink = clipboardUrl ?: "",
                 onDismissRequest = { 
                     showSheet = false
-                    onClipboardPromptDismiss()
+                    onHideClipboardPrompt()
                 },
                 onConfirm = { link ->
                     onAction(ListAction.OnAddLinkConfirm(link))
                     showSheet = false
-                    onClipboardPromptDismiss()
+                    onHideClipboardPrompt()
                 },
             )
         }
@@ -152,6 +153,7 @@ fun ListScreenPreview() {
         clipboardUrl = "https://example.com",
         showClipboardPrompt = true,
         onClipboardPromptClick = {},
-        onClipboardPromptDismiss = {}
+        onHideClipboardPrompt = {},
+        onDismissClipboardForever = {}
     )
 }

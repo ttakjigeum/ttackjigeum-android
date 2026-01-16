@@ -5,6 +5,7 @@ import com.devhjs.ttackjigeum_android.MainDispatcherRule
 import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.core.util.ShareIntentHandler
+import com.devhjs.ttackjigeum_android.core.manager.ClipboardStateManager
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
@@ -38,6 +39,7 @@ class ListViewModelTest {
     private lateinit var searchProductsUseCase: SearchProductsUseCase
     private lateinit var addProductUseCase: AddProductUseCase
     private lateinit var deleteProductUseCase: DeleteProductUseCase
+    private lateinit var clipboardStateManager: ClipboardStateManager
     private lateinit var viewModel: ListViewModel
 
     @Before
@@ -45,6 +47,7 @@ class ListViewModelTest {
         searchProductsUseCase = mockk(relaxed = true)
         addProductUseCase = mockk(relaxed = true)
         deleteProductUseCase = mockk(relaxed = true)
+        clipboardStateManager = mockk(relaxed = true)
 
         // Mock ShareIntentHandler to prevent state leakage between tests
         mockkObject(ShareIntentHandler)
@@ -63,7 +66,8 @@ class ListViewModelTest {
         viewModel = ListViewModel(
             searchProductsUseCase = searchProductsUseCase,
             addProductUseCase = addProductUseCase,
-            deleteProductUseCase = deleteProductUseCase
+            deleteProductUseCase = deleteProductUseCase,
+            clipboardStateManager = clipboardStateManager
         )
     }
 
@@ -110,6 +114,7 @@ class ListViewModelTest {
         advanceUntilIdle()
 
         coVerify { addProductUseCase(link) }
+        io.mockk.verify { clipboardStateManager.markUrlProcessed(link) }
         coVerify(atLeast = 2) { searchProductsUseCase(any()) } // Initial + After Add
     }
 
@@ -204,5 +209,23 @@ class ListViewModelTest {
             val event = awaitItem()
             assertTrue(event is ListEvent.ShowToast)
         }
+    }
+
+    @Test
+    fun `shouldShowClipboardPrompt delegates to manager`() {
+        initViewModel()
+        val url = "http://test.com"
+        every { clipboardStateManager.shouldShowSnackbar(url) } returns true
+
+        assertTrue(viewModel.shouldShowClipboardPrompt(url))
+        io.mockk.verify { clipboardStateManager.shouldShowSnackbar(url) }
+    }
+
+    @Test
+    fun `setClipboardDismissed delegates to manager`() {
+        initViewModel()
+        val url = "http://test.com"
+        viewModel.setClipboardDismissed(url)
+        io.mockk.verify { clipboardStateManager.setDismissed(url) }
     }
 }
