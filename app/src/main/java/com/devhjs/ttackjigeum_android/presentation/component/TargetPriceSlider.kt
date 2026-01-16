@@ -4,14 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,10 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
+import com.devhjs.ttackjigeum_android.core.util.clearFocusOnDone
+import com.devhjs.ttackjigeum_android.core.util.PriceVisualTransformation
+import kotlin.math.round
 
 @Composable
 fun TargetPriceSlider(
@@ -39,14 +50,11 @@ fun TargetPriceSlider(
     currentPrice: Int,
     onTargetPriceChange: (Int) -> Unit
 ) {
-    // Determine min/max range based on prices
-    // Example logic: Min = 0, Max = Current Price * 1.5 (or similar)
-    // For now, let's keep hardcoded range logic or passed params.
-    // User asked to modify data.
-    // Let's assume range is dynamic.
-    val minPrice = (currentPrice * 0.5).toInt() // Example: 50% of current
-    val maxPrice = (currentPrice * 1.2).toInt() // Example: 120% of current
+    val minPrice = remember(currentPrice) { (currentPrice * 0.5).toInt() }
+    val maxPrice = remember(currentPrice) { (currentPrice * 1.5).toInt() }
+    
     var sliderValue by remember(targetPrice) { mutableFloatStateOf(targetPrice.toFloat()) }
+    val focusManager = LocalFocusManager.current
 
     Card(
         modifier = modifier
@@ -77,31 +85,30 @@ fun TargetPriceSlider(
                     )
                 }
                 
-                Card(
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Text(
-                        text = "₩${String.format("%,d", sliderValue.toInt())}",
-                        style = AppTextStyles.mediumTextBold,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
-                    )
-                }
+                PriceInputBox(
+                    value = sliderValue.toInt(),
+                    onValueChange = { 
+                        sliderValue = it.toFloat()
+                        onTargetPriceChange(it)
+                    },
+                    focusManager = focusManager
+                )
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             @OptIn(ExperimentalMaterial3Api::class)
             Slider(
-                value = sliderValue,
-                onValueChange = { sliderValue = it },
+                value = sliderValue.coerceIn(minPrice.toFloat(), maxPrice.toFloat()),
+                onValueChange = {
+                    val step = 100f
+                    sliderValue = round(it / step) * step
+                },
                 onValueChangeFinished = {
                     onTargetPriceChange(sliderValue.toInt())
                 },
                 valueRange = minPrice.toFloat()..maxPrice.toFloat(),
                 thumb = {
-                    // Custom Thumb
                     Box(
                         modifier = Modifier
                             .size(32.dp)
@@ -112,7 +119,6 @@ fun TargetPriceSlider(
                     )
                 },
                 track = { sliderState ->
-                    // Custom Track
                     SliderDefaults.Track(
                         sliderState = sliderState,
                         modifier = Modifier.height(10.dp),
@@ -132,17 +138,54 @@ fun TargetPriceSlider(
             ) {
                 Text(
                     text = "₩${String.format("%,d", minPrice)}",
-                    style = AppTextStyles.smallerTextBold.copy(
-                        color = AppColors.TextGray2
-                    )
+                    style = AppTextStyles.smallerTextBold.copy(color = AppColors.TextGray2)
                 )
                 Text(
                     text = "₩${String.format("%,d", maxPrice)}",
-                    style = AppTextStyles.smallerTextBold.copy(
-                        color = AppColors.TextGray2
-                    )
+                    style = AppTextStyles.smallerTextBold.copy(color = AppColors.TextGray2)
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun PriceInputBox(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    focusManager: androidx.compose.ui.focus.FocusManager
+) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
+        modifier = Modifier.padding(start = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "₩",
+                style = AppTextStyles.mediumTextBold
+            )
+            BasicTextField(
+                value = if (value == 0) "" else value.toString(),
+                onValueChange = { newValue ->
+                    val filtered = newValue.filter { it.isDigit() }
+                    val price = if (filtered.isEmpty()) 0 else filtered.toLong().coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+                    onValueChange(price)
+                },
+                textStyle = AppTextStyles.mediumTextBold,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = clearFocusOnDone(focusManager),
+                singleLine = true,
+                cursorBrush = SolidColor(AppColors.Primary),
+                visualTransformation = PriceVisualTransformation(),
+                modifier = Modifier.width(IntrinsicSize.Min)
+            )
         }
     }
 }
