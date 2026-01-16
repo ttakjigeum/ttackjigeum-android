@@ -1,6 +1,7 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { setGlobalOptions } = require("firebase-functions/v2");
+const { onSchedule } = require("firebase-functions/v2/scheduler");
 const admin = require("firebase-admin");
 
 if (admin.apps.length === 0) {
@@ -138,4 +139,76 @@ exports.checkPriceAndNotify = onDocumentCreated("priceHistorys/{historyId}", asy
         console.error("오류 발생:", error);
     }
     return null;
+});
+
+/**
+ * [공통 로직] 가격 변동 처리용 함수
+ * 요구하신 필드 형식(datetime, price, productId)에 맞춰 저장합니다.
+ */
+async function performPriceUpdate() {
+    console.log("--- 가격 업데이트 로직 실행 시작 ---");
+    const productsSnap = await admin.firestore().collection("products").get();
+
+    if (productsSnap.empty) {
+        console.log("업데이트할 상품이 없습니다.");
+        return "상품 없음";
+    }
+
+    const batch = admin.firestore().batch();
+    const historyCollection = admin.firestore().collection("priceHistorys");
+
+    // 오늘 날짜를 "YYYY-MM-DD" 형식의 문자열로 생성
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0]; // 결과 예: "2026-01-16"
+
+    for (const doc of productsSnap.docs) {
+        const productData = doc.data();
+        const currentPrice = productData.currentPrice || 10000;
+
+        // 랜덤 가격 변동 (-10% ~ +10%)
+        const changeType = Math.floor(Math.random() * 3); // 0:유지, 1:하락, 2:상승
+        let newPrice = currentPrice;
+
+        if (changeType === 1) { // 하락
+            newPrice = Math.floor(currentPrice * (0.9 + Math.random() * 0.05));
+        } else if (changeType === 2) { // 상승
+            newPrice = Math.floor(currentPrice * (1.05 + Math.random() * 0.05));
+        }
+
+        console.log(`[변동 확인] ${productData.name}: ${currentPrice} -> ${newPrice}`);
+
+        // 요청하신 형식으로 필드 구성
+        const newHistoryRef = historyCollection.doc();
+        batch.set(newHistoryRef, {
+            datetime: dateString,     // "2026-01-16" (string)
+            price: newPrice,          // 4800 (number)
+            productId: productData.id // 1 (number)
+        });
+    }
+
+    await batch.commit();
+    return `상품 ${productsSnap.size}개 업데이트 완료 (날짜: ${dateString})`;
+}
+
+/**
+ * [함수 3] 매일 새벽 2시 스케줄러 실행
+ */
+exports.dailyPriceUpdate = onSchedule({
+    schedule: "0 2 * * *",
+    timeZone: "Asia/Seoul",
+}, async (event) => {
+    console.log("정기 가격 업데이트 시작");
+    await performPriceUpdate();
+});
+
+/**
+ * [함수 4] 수동 실행 테스트용 URL
+ */
+exports.manualPriceUpdate = onRequest(async (req, res) => {
+    try {
+        const result = await performPriceUpdate();
+        res.status(200).send(`수동 실행 성공: ${result}`);
+    } catch (e) {
+        res.status(500).send(e.message);
+    }
 });
