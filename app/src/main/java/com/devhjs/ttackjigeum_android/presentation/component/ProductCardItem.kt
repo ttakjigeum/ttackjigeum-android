@@ -54,6 +54,7 @@ fun ProductCardItem(
     val badgeType = when {
         product.currentPrice <= product.lowestPrice -> BadgeType.LOWEST_PRICE
         product.currentPrice < product.originalPrice -> BadgeType.PRICE_DROP
+        product.currentPrice > product.originalPrice -> BadgeType.PRICE_RISE
         else -> BadgeType.NO_CHANGE
     }
 
@@ -196,6 +197,24 @@ fun PreviewProductCardItem() {
         name = "소니 WH-1000XM5 무선 노이즈 캔셀링 헤드폰",
         originalPrice = 350000,
         currentPrice = 298000,
+        targetPrice = 320000,
+        lowestPrice = 290000,
+        averagePrice = 330000,
+        isFavorite = false,
+        url = "",
+        imageUrl = "",
+    )
+    ProductCardItem(product = mockProduct)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewProductCardItemRise() {
+    val mockProduct = Product(
+        id = 2L,
+        name = "가격 상승 예시 상품",
+        originalPrice = 300000,
+        currentPrice = 350000,
         targetPrice = 320000,
         lowestPrice = 290000,
         averagePrice = 330000,

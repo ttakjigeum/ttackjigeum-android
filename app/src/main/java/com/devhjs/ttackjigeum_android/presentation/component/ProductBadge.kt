@@ -42,6 +42,13 @@ enum class BadgeType(
         iconResId = R.drawable.ic_trending_down,
         iconTint = AppColors.Primary
     ),
+    PRICE_RISE(
+        text = "가격 상승",
+        textColor = AppColors.Warning1,
+        backgroundColor = AppColors.Warning2,
+        iconResId = R.drawable.ic_trending_up,
+        iconTint = AppColors.Warning1
+    ),
     NO_CHANGE(
         text = "변동 없음",
         textColor = AppColors.TextGray1,
@@ -94,6 +101,12 @@ fun PreviewLowestPriceBadge() {
 @Composable
 fun PreviewPriceDropBadge() {
     ProductBadge(type = BadgeType.PRICE_DROP)
+}
+
+@Preview(showBackground = true, name = "Price Rise")
+@Composable
+fun PreviewPriceRiseBadge() {
+    ProductBadge(type = BadgeType.PRICE_RISE)
 }
 
 @Preview(showBackground = true, name = "No Change")
