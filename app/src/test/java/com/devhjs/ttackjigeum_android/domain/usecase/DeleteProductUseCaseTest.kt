@@ -42,7 +42,9 @@ class DeleteProductUseCaseTest {
 
         // Then
         assertTrue(result is Result.Success)
-        coVerify { productRepository.deleteProduct(productId) }
+        // Verify productRepository.deleteProduct is NOT called
+        coVerify(exactly = 0) { productRepository.deleteProduct(productId) }
+        // Verify userConfigRepository.deleteUserConfig IS called
         coVerify { userConfigRepository.deleteUserConfig(productId) }
     }
 
@@ -51,7 +53,8 @@ class DeleteProductUseCaseTest {
         val productId = 123L
 
         // Given
-        coEvery { productRepository.deleteProduct(productId) } throws RuntimeException("DB Error")
+        // Mock exception on userConfigRepository instead of productRepository
+        coEvery { userConfigRepository.deleteUserConfig(productId) } throws RuntimeException("DB Error")
 
         // When
         val result = deleteProductUseCase(productId)
