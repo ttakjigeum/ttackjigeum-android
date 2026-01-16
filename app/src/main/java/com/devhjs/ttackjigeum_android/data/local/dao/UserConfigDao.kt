@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.devhjs.ttackjigeum_android.data.local.entity.UserConfigEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserConfigDao {
@@ -16,6 +17,9 @@ interface UserConfigDao {
 
     @Query("SELECT * FROM user_configs ORDER BY product_id ASC")
     suspend fun getAll(): List<UserConfigEntity>
+
+    @Query("SELECT * FROM user_configs ORDER BY product_id ASC")
+    fun getAllFlow(): Flow<List<UserConfigEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(userConfig: UserConfigEntity)

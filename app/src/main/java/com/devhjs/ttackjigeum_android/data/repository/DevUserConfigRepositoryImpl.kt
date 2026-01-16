@@ -6,6 +6,8 @@ import com.devhjs.ttackjigeum_android.data.mapper.toEntity
 import com.devhjs.ttackjigeum_android.data.repository.mock.MockData
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class DevUserConfigRepositoryImpl(
     private val userConfigDao: UserConfigDao,
@@ -25,6 +27,12 @@ class DevUserConfigRepositoryImpl(
             return userConfigDao.getAll().map { it.toDomain() }
         }
         return currentList
+    }
+
+    override fun getAllUserConfigsFlow(): Flow<List<UserConfig>> {
+        return userConfigDao.getAllFlow().map { entities ->
+            entities.map { it.toDomain() }
+        }
     }
 
     override suspend fun saveUserConfig(userConfig: UserConfig) {

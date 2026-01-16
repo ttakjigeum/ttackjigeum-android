@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,13 +34,34 @@ class ListViewModel(
 
     init {
         viewModelScope.launch {
-            // 초기 로딩과 공유 인텐트 처리를 순차적으로 진행하거나 로딩 상태를 통합 관리
-            _state.update { it.copy(isLoading = true) }
-            
-            // 1. 초기 상품 로드
-            loadProductsInternal()
-            
-            // 2. 공유 인텐트 대기 및 처리
+            // Reactive data loading
+            _state
+                .map { it.searchQuery }
+                .distinctUntilChanged()
+                .flatMapLatest { query ->
+                    _state.update { it.copy(isLoading = true) }
+                    searchProductsUseCase(query)
+                }
+                .collect { result ->
+                     when (result) {
+                        is Result.Success -> {
+                            _state.update {
+                                it.copy(
+                                    isLoading = false,
+                                    products = result.data,
+                                )
+                            }
+                        }
+                        is Result.Error -> {
+                            _state.update { it.copy(isLoading = false) }
+                            _event.emit(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
+                        }
+                    }
+                }
+        }
+
+        viewModelScope.launch {
+             // 2. 공유 인텐트 대기 및 처리
             ShareIntentHandler.sharedUrl.collectLatest { url ->
                 url?.let {
                     _state.update { it.copy(isLoading = true) }
@@ -66,7 +90,6 @@ class ListViewModel(
             }
             is ListAction.OnSearchQueryChange -> {
                 _state.update { it.copy(searchQuery = action.query) }
-                loadProducts()
             }
             is ListAction.OnSwipeDelete -> {
                 _state.update { it.copy(productToDelete = action.product) }
@@ -86,34 +109,10 @@ class ListViewModel(
         }
     }
 
-    private fun loadProducts() {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            loadProductsInternal()
-        }
-    }
-
-    private suspend fun loadProductsInternal() {
-        when (val result = searchProductsUseCase(_state.value.searchQuery)) {
-            is Result.Success -> {
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        products = result.data,
-                    )
-                }
-            }
-            is Result.Error -> {
-                _state.update { it.copy(isLoading = false) }
-                _event.emit(ListEvent.ShowToast("상품 정보를 불러오는데 실패했습니다."))
-            }
-        }
-    }
-
     private suspend fun handleOnAddLinkConfirm(link: String) {
         when (val result = addProductUseCase(link)) {
             is Result.Success -> {
-                loadProductsInternal()
+                // Auto-updated via Flow
             }
             is Result.Error -> {
                 _state.update { it.copy(isLoading = false) }
@@ -129,7 +128,7 @@ class ListViewModel(
     private suspend fun deleteProduct(productId: Long) {
         when (deleteProductUseCase(productId)) {
             is Result.Success -> {
-                loadProductsInternal()
+                // Auto-updated via Flow
                 _event.emit(ListEvent.ShowToast("상품이 삭제되었습니다."))
             }
             is Result.Error -> {

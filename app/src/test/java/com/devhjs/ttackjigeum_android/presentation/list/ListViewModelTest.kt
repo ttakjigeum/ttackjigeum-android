@@ -17,6 +17,7 @@ import io.mockk.mockkObject
 import io.mockk.unmockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -70,7 +71,7 @@ class ListViewModelTest {
     @Test
     // 초기화 시 초기 상태 검증
     fun `Initial state verification on initialization`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         initViewModel()
         advanceUntilIdle()
 
@@ -83,7 +84,7 @@ class ListViewModelTest {
     @Test
     // 검색어 업데이트 시 상품 검색 트리거
     fun `Search query update triggers product search`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         initViewModel()
         advanceUntilIdle()
 
@@ -99,7 +100,7 @@ class ListViewModelTest {
     @Test
     // 링크 추가 확인 시 상품 추가 유스케이스 트리거
     fun `OnAddLinkConfirm triggers add product use case`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { addProductUseCase(any()) } returns Result.Success(Unit)
 
         initViewModel()
@@ -116,7 +117,7 @@ class ListViewModelTest {
     @Test
     // 스와이프 삭제 시 삭제할 상품 설정
     fun `OnSwipeDelete sets product to delete`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         initViewModel()
         advanceUntilIdle()
 
@@ -134,7 +135,7 @@ class ListViewModelTest {
     @Test
     // 삭제 확인 시 상품 삭제 유스케이스 트리거
     fun `OnDeleteConfirm triggers delete product use case`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { deleteProductUseCase(any()) } returns Result.Success(Unit)
 
         initViewModel()
@@ -160,7 +161,7 @@ class ListViewModelTest {
     @Test
     // 삭제 취소 시 삭제할 상품 초기화
     fun `OnDeleteCancel clears product to delete`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         initViewModel()
         advanceUntilIdle()
 
@@ -179,7 +180,7 @@ class ListViewModelTest {
     @Test
     // 공유 인텐트 핸들러가 상품 추가 트리거
     fun `ShareIntentHandler triggers add product`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Success(emptyList())
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
         coEvery { addProductUseCase(any()) } returns Result.Success(Unit)
 
         val sharedUrl = "http://shared.com"
@@ -195,7 +196,7 @@ class ListViewModelTest {
     @Test
     // 에러 발생 시 토스트 메시지 표시
     fun `Error handling shows toast`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns Result.Error(DataError.Network.UNKNOWN)
+        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Error(DataError.Network.UNKNOWN))
 
         initViewModel()
 
