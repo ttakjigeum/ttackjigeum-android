@@ -42,10 +42,7 @@ fun ListScreen(
     Scaffold(
         containerColor = AppColors.AppBackground,
         topBar = {
-            CustomAppBar(
-                showBadge = true,
-                onNotificationClick = { onAction(ListAction.OnNotificationClick) },
-            )
+            CustomAppBar()
         },
         floatingActionButton = {
             CustomFloatingActionButton(
