@@ -4,8 +4,11 @@ import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -33,10 +36,10 @@ class SearchProductsUseCaseTest {
     @Test
     fun `invoke with empty query returns all products`() = runTest {
         // Given
-        coEvery { getProductsUseCase() } returns Result.Success(sampleProducts)
+        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
 
         // When
-        val result = searchProductsUseCase("")
+        val result = searchProductsUseCase("").first()
 
         // Then
         assertTrue(result is Result.Success)
@@ -47,10 +50,10 @@ class SearchProductsUseCaseTest {
     @Test
     fun `invoke with query returns filtered products`() = runTest {
         // Given
-        coEvery { getProductsUseCase() } returns Result.Success(sampleProducts)
+        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
 
         // When
-        val result = searchProductsUseCase("Apple")
+        val result = searchProductsUseCase("Apple").first()
 
         // Then
         assertTrue(result is Result.Success)
@@ -62,10 +65,10 @@ class SearchProductsUseCaseTest {
     @Test
     fun `invoke with query is case insensitive`() = runTest {
         // Given
-        coEvery { getProductsUseCase() } returns Result.Success(sampleProducts)
+        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
 
         // When
-        val result = searchProductsUseCase("iphone")
+        val result = searchProductsUseCase("iphone").first()
 
         // Then
         assertTrue(result is Result.Success)
@@ -77,10 +80,10 @@ class SearchProductsUseCaseTest {
     @Test
     fun `invoke propagates error from getProductsUseCase`() = runTest {
         // Given
-        coEvery { getProductsUseCase() } returns Result.Error(DataError.Network.UNKNOWN)
+        every { getProductsUseCase() } returns flowOf(Result.Error(DataError.Network.UNKNOWN))
 
         // When
-        val result = searchProductsUseCase("query")
+        val result = searchProductsUseCase("query").first()
 
         // Then
         assertTrue(result is Result.Error)

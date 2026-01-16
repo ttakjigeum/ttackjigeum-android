@@ -6,6 +6,9 @@ import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class FirestoreUserConfigRepositoryImpl(
@@ -14,7 +17,8 @@ class FirestoreUserConfigRepositoryImpl(
 
     private val userId = "1" // Fixed User ID for now
 
-    private fun getUserCollection() = firestore.collection("users").document(userId).collection("product")
+    private fun getUserCollection() =
+        firestore.collection("users").document(userId).collection("product")
 
     override suspend fun getUserConfig(productId: Long): UserConfig? {
         return try {
@@ -41,17 +45,41 @@ class FirestoreUserConfigRepositoryImpl(
             snapshot.documents.mapNotNull { doc ->
                 val dto = doc.toObject(UserConfigDto::class.java)
                 dto?.let {
-                   UserConfig(
-                       productId = it.productId ?: doc.id.toLongOrNull() ?: 0L,
-                       targetPrice = it.targetPrice ?: 0,
-                       notificationEnabled = it.notificationEnabled ?: false
-                   )
+                    UserConfig(
+                        productId = it.productId ?: doc.id.toLongOrNull() ?: 0L,
+                        targetPrice = it.targetPrice ?: 0,
+                        notificationEnabled = it.notificationEnabled ?: false
+                    )
                 }
             }
         } catch (e: Exception) {
             Log.e("FirestoreUserConfig", "Error getting all user configs", e)
             emptyList()
         }
+    }
+
+    override fun getAllUserConfigsFlow(): Flow<List<UserConfig>> = callbackFlow {
+        val listener = getUserCollection().addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                val configs = snapshot.documents.mapNotNull { doc ->
+                    val dto = doc.toObject(UserConfigDto::class.java)
+                    dto?.let {
+                        UserConfig(
+                            productId = it.productId ?: doc.id.toLongOrNull() ?: 0L,
+                            targetPrice = it.targetPrice ?: 0,
+                            notificationEnabled = it.notificationEnabled ?: false
+                        )
+                    }
+                }
+                trySend(configs)
+            }
+        }
+        awaitClose { listener.remove() }
     }
 
     override suspend fun saveUserConfig(userConfig: UserConfig) {
