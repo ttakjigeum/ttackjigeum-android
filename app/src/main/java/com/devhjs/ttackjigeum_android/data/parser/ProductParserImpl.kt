@@ -7,6 +7,8 @@ import android.os.Looper
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.devhjs.ttackjigeum_android.core.util.DataError
+import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.ParsedProductData
 import com.devhjs.ttackjigeum_android.domain.parser.ProductParser
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +21,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    override suspend fun parseProduct(url: String): Result<ParsedProductData> =
+    override suspend fun parseProduct(url: String): Result<ParsedProductData, DataError> =
         withContext(Dispatchers.Main) {
             Log.d("ProductParser", "파싱 시작: $url")
             return@withContext suspendCancellableCoroutine { continuation ->
@@ -85,8 +87,8 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                                             if (!isResumed) {
                                                 isResumed = true
                                                 continuation.resume(
-                                                    Result.failure(
-                                                        IllegalArgumentException("지원하지 않는 URL"),
+                                                    Result.Error(
+                                                        DataError.Local.UNKNOWN,
                                                     ),
                                                 )
                                             }
@@ -110,7 +112,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                             safeDestroy(webView)
                             if (!isResumed) {
                                 isResumed = true
-                                continuation.resume(Result.failure(Exception("WebView 로딩 실패: $description")))
+                                continuation.resume(Result.Error(DataError.Network.UNKNOWN))
                             }
                         }
                     }
@@ -127,7 +129,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                     Log.e("ProductParser", "예외 발생: ${e.message}", e)
                     if (!isResumed) {
                         isResumed = true
-                        continuation.resume(Result.failure(e))
+                        continuation.resume(Result.Error(DataError.Network.UNKNOWN))
                     }
                 }
             }
@@ -136,7 +138,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
     private fun extractNaverData(
         webView: WebView,
         url: String,
-        onComplete: (Result<ParsedProductData>) -> Unit,
+        onComplete: (Result<ParsedProductData, DataError>) -> Unit,
     ) {
         var attemptCount = 0
         val maxAttempts = 20
@@ -212,7 +214,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                                 safeDestroy(webView)
                             }
 
-                            onComplete(Result.success(productData))
+                            onComplete(Result.Success(productData))
                         } else if (attemptCount < maxAttempts) {
                             handler.postDelayed(this, 500)
                         } else {
@@ -223,7 +225,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                                 safeDestroy(webView)
                             }
 
-                            onComplete(Result.failure(Exception("가격 정보를 찾을 수 없습니다")))
+                            onComplete(Result.Error(DataError.Local.UNKNOWN))
                         }
                     } catch (e: Exception) {
                         Log.e("ProductParser", "파싱 오류", e)
@@ -233,7 +235,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                             handler.post {
                                 safeDestroy(webView)
                             }
-                            onComplete(Result.failure(e))
+                            onComplete(Result.Error(DataError.Local.UNKNOWN))
                         }
                     }
                 }
@@ -246,7 +248,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
     private fun extractCoupangData(
         webView: WebView,
         url: String,
-        onComplete: (Result<ParsedProductData>) -> Unit,
+        onComplete: (Result<ParsedProductData, DataError>) -> Unit,
     ) {
         handler.postDelayed(
             {
@@ -348,7 +350,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
     private fun parseJsonResult(
         jsonResult: String,
         url: String,
-        onComplete: (Result<ParsedProductData>) -> Unit,
+        onComplete: (Result<ParsedProductData, DataError>) -> Unit,
     ) {
         try {
             val cleanJson = jsonResult.trim('"')
@@ -370,7 +372,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                 if (data.has("stack")) {
                     Log.e("ProductParser", "Stack: ${data.getString("stack")}")
                 }
-                onComplete(Result.failure(Exception(data.getString("error"))))
+                onComplete(Result.Error(DataError.Local.UNKNOWN))
                 return
             }
 
@@ -387,10 +389,10 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                 "파싱 완료 - 상품명: ${parsedData.name}, 현재가: ${parsedData.currentPrice}, 원가: ${parsedData.originalPrice}",
             )
 
-            onComplete(Result.success(parsedData))
+            onComplete(Result.Success(parsedData))
         } catch (e: Exception) {
             Log.e("ProductParser", "parseJsonResult 예외 발생: ${e.message}", e)
-            onComplete(Result.failure(e))
+            onComplete(Result.Error(DataError.Local.UNKNOWN))
         }
     }
 

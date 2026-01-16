@@ -25,8 +25,9 @@ class AddProductUseCase(
 
             val parseResult = productParser.parseProduct(url)
 
-            parseResult.fold(
-                onSuccess = { parsedData ->
+            when (parseResult) {
+                is Result.Success -> {
+                    val parsedData = parseResult.data
                     val newId = System.currentTimeMillis()
 
                     val newProduct = Product(
@@ -52,11 +53,11 @@ class AddProductUseCase(
                     userConfigRepository.saveUserConfig(newUserConfig)
 
                     Result.Success(Unit)
-                },
-                onFailure = {
-                    Result.Error(DataError.Network.UNKNOWN)
                 }
-            )
+                is Result.Error -> {
+                    Result.Error(parseResult.error)
+                }
+            }
         } catch (e: Exception) {
             Result.Error(DataError.Network.UNKNOWN)
         }
