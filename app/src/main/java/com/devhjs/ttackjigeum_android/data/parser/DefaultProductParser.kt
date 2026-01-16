@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import kotlin.coroutines.resume
 
-class ProductParserImpl(private val context: Context) : ProductParser {
+class DefaultProductParser(private val context: Context) : ProductParser {
 
     private val handler = Handler(Looper.getMainLooper())
 
