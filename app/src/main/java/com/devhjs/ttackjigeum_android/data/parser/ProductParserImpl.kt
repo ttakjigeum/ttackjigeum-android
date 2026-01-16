@@ -1,6 +1,7 @@
 package com.devhjs.ttackjigeum_android.data.parser
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -43,7 +44,7 @@ class ProductParserImpl(private val context: Context) : ProductParser {
                         override fun onPageStarted(
                             view: WebView?,
                             url: String?,
-                            favicon: android.graphics.Bitmap?,
+                            favicon: Bitmap?,
                         ) {
                             super.onPageStarted(view, url, favicon)
                         }
