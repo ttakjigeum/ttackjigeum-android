@@ -46,7 +46,7 @@ fun ClipboardLinkSnackbar(
             modifier = Modifier.weight(1f)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_link), // Make sure this resource exists or use a default one
+                painter = painterResource(id = R.drawable.ic_link), // 해당 리소스가 존재하는지 확인하거나 기본 리소스를 사용하십시오.
                 contentDescription = null,
                 tint = AppColors.Blue,
                 modifier = Modifier.size(20.dp)
@@ -61,7 +61,7 @@ fun ClipboardLinkSnackbar(
                 overflow = TextOverflow.Ellipsis
             )
             Icon(
-                painter = painterResource(id = R.drawable.ic_chevron_right), // Make sure this resource exists
+                painter = painterResource(id = R.drawable.ic_chevron_right), // 해당 리소스가 존재하는지 확인하십시오.
                 contentDescription = null,
                 tint = AppColors.Blue,
                 modifier = Modifier.size(16.dp)
@@ -73,7 +73,7 @@ fun ClipboardLinkSnackbar(
             modifier = Modifier.size(24.dp)
         ) {
              Icon(
-                painter = painterResource(id = R.drawable.ic_close), // Make sure this resource exists
+                painter = painterResource(id = R.drawable.ic_close), // 해당 리소스가 존재하는지 확인하십시오.
                 contentDescription = "닫기",
                 tint = Color.Gray,
                 modifier = Modifier.size(16.dp)

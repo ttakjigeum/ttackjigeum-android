@@ -48,8 +48,8 @@ class FirestoreProductRepositoryImpl(
     override suspend fun getProductByIds(ids: List<Long>): List<Product> {
         if (ids.isEmpty()) return emptyList()
         return try {
-            // Firestore 'in' query supports up to 10 values generally, but for simplicity we can try whereIn.
-            // Or if large list, might need multiple queries. Assuming small list for now.
+            // Firestore의 'in' 쿼리는 일반적으로 최대 10개의 값을 지원하지만, 여기서는 간단하게 whereIn을 시도합니다.
+            // 리스트가 큰 경우 여러 쿼리가 필요할 수 있습니다. 현재는 작은 리스트라고 가정합니다.
             val snapshot = firestore.collection(collectionRegex)
                 .whereIn("id", ids)
                 .get()
@@ -67,7 +67,7 @@ class FirestoreProductRepositoryImpl(
     override suspend fun addProduct(product: Product) {
         try {
             val productDto = product.toDto()
-            // Using a generated ID for document, but storing the Logic ID inside
+            // 문서에는 생성된 ID를 사용하지만, 내부에는 로직 ID를 저장합니다.
             firestore.collection(collectionRegex).add(productDto).await()
         } catch (e: Exception) {
             e.printStackTrace()

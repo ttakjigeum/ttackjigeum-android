@@ -38,7 +38,7 @@ fun NotificationButton(
         Icon(
             painter = painterResource(id = if (isActive) R.drawable.ic_active else R.drawable.ic_paused),
             contentDescription = if (isActive) "알림 끄기" else "알림 켜기",
-            tint = if (isActive) AppColors.Primary else AppColors.TextGray2 // Optional: Tint green when active
+            tint = if (isActive) AppColors.Primary else AppColors.TextGray2 // 선택 사항: 활성화 시 녹색 틴트 적용
         )
     }
 }

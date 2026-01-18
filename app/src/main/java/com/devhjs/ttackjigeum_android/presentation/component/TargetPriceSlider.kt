@@ -39,13 +39,13 @@ fun TargetPriceSlider(
     currentPrice: Int,
     onTargetPriceChange: (Int) -> Unit
 ) {
-    // Determine min/max range based on prices
-    // Example logic: Min = 0, Max = Current Price * 1.5 (or similar)
-    // For now, let's keep hardcoded range logic or passed params.
-    // User asked to modify data.
-    // Let's assume range is dynamic.
-    val minPrice = (currentPrice * 0.5).toInt() // Example: 50% of current
-    val maxPrice = (currentPrice * 1.2).toInt() // Example: 120% of current
+    // 가격을 기반으로 최소/최대 범위 결정
+    // 예시 로직: 최소 = 0, 최대 = 현재 가격 * 1.5 (또는 유사)
+    // 현재로서는 하드코딩된 범위 로직이나 전달된 파라미터를 유지합니다.
+    // 사용자 데이터 수정 요청.
+    // 범위가 동적이라고 가정합니다.
+    val minPrice = (currentPrice * 0.5).toInt() // 예시: 현재 가격의 50%
+    val maxPrice = (currentPrice * 1.2).toInt() // 예시: 현재 가격의 120%
     var sliderValue by remember(targetPrice) { mutableFloatStateOf(targetPrice.toFloat()) }
 
     Card(
@@ -101,7 +101,7 @@ fun TargetPriceSlider(
                 },
                 valueRange = minPrice.toFloat()..maxPrice.toFloat(),
                 thumb = {
-                    // Custom Thumb
+                    // 커스텀 썸(Thumb)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
@@ -112,7 +112,7 @@ fun TargetPriceSlider(
                     )
                 },
                 track = { sliderState ->
-                    // Custom Track
+                    // 커스텀 트랙(Track)
                     SliderDefaults.Track(
                         sliderState = sliderState,
                         modifier = Modifier.height(10.dp),

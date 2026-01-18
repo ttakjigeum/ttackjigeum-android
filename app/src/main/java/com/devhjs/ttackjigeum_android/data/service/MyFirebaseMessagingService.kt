@@ -17,22 +17,22 @@ import com.google.firebase.messaging.RemoteMessage
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
+        // TODO(developer): 여기서 FCM 메시지를 처리하십시오.
+        // 메시지가 수신되지 않는 경우 원인을 확인하십시오: https://goo.gl/39bRNJ
         Log.d(TAG, "From: ${remoteMessage.from}")
 
-        // Check if message contains a data payload.
+        // 메시지에 데이터 페이로드가 포함되어 있는지 확인하십시오.
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
             handleNow()
         }
 
-        // Check if message contains a notification payload.
+        // 메시지에 알림 페이로드가 포함되어 있는지 확인하십시오.
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             sendNotification(it.title ?: "알림", it.body ?: "")
         } ?: run {
-            // Handle data payload as notification if no notification payload
+            // 알림 페이로드가 없는 경우 데이터 페이로드를 알림으로 처리하십시오.
             val title = remoteMessage.data["title"]
             val body = remoteMessage.data["body"]
             if (!title.isNullOrEmpty() && !body.isNullOrEmpty()) {
@@ -51,7 +51,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: Implement this method to send token to your app server.
+        // TODO: 앱 서버에 토큰을 전송하는 로직을 구현하십시오.
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 
@@ -64,7 +64,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val channelId = "default_channel_id"
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification_filled) // Using launcher foreground as fallback/standard if ic_notification_filled is not preferred or to ensure visibility
+            .setSmallIcon(R.drawable.ic_notification_filled) // ic_notification_filled 리소스가 권장되거나 가시성 확보를 위해 배경 처리가 필요합니다.
             .setContentTitle(title)
             .setContentText(messageBody)
             .setAutoCancel(true)
@@ -74,7 +74,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        // Since android Oreo notification channel is needed.
+        // Android Oreo 버전(API 26)부터는 알림 채널이 필수입니다.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId,
                 "Default Channel",

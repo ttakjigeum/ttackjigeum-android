@@ -20,7 +20,7 @@ class DevUserConfigRepositoryImpl(
     override suspend fun getAllUserConfigs(): List<UserConfig> {
         val currentList = userConfigDao.getAll().map { it.toDomain() }
         if (currentList.isEmpty()) {
-            // Seed with Mock Data if empty
+            // 비어있는 경우 모의 데이터로 초기화
             MockData.MockUserConfigs.forEach { mockConfig ->
                 userConfigDao.insert(mockConfig.toEntity())
             }
