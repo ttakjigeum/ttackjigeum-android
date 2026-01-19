@@ -38,7 +38,7 @@ fun DetailProductCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1.2f) // Adjust aspect ratio as needed
+                .aspectRatio(1.2f) // 필요에 따라 화면 비율을 조정
         ) {
             SubcomposeAsyncImage(
                 model = imageUrl,

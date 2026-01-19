@@ -6,7 +6,7 @@ import com.devhjs.ttackjigeum_android.domain.repository.PriceHistoryRepository
 
 class DevPriceHistoryRepositoryImpl : PriceHistoryRepository {
     override suspend fun getPriceHistories(productId: Long): List<PriceHistory> {
-        // Mock data logic from MockPriceHistoryRepositoryImpl
+        // MockPriceHistoryRepositoryImpl에서 사용하는 테스트용 데이터 로직
         return MockData.MockPriceHistories[productId] ?: emptyList()
     }
 }
