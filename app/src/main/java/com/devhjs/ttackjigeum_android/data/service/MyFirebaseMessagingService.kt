@@ -17,8 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): 여기서 FCM 메시지를 처리하십시오.
-        // 메시지가 수신되지 않는 경우 원인을 확인하십시오: https://goo.gl/39bRNJ
+
         Log.d(TAG, "From: ${remoteMessage.from}")
 
         // 메시지에 데이터 페이로드가 포함되어 있는지 확인하십시오.
@@ -51,7 +50,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-        // TODO: 앱 서버에 토큰을 전송하는 로직을 구현하십시오.
+
         Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 
