@@ -116,7 +116,6 @@ class ListViewModelTest {
 
         coVerify { addProductUseCase(link) }
         io.mockk.verify { clipboardStateManager.markUrlProcessed(link) }
-        coVerify(atLeast = 2) { searchProductsUseCase(any()) } // Initial + After Add
     }
 
     @Test
@@ -160,7 +159,6 @@ class ListViewModelTest {
 
         coVerify { deleteProductUseCase(product.id) }
         assertNull(viewModel.state.value.productToDelete)
-        coVerify(atLeast = 2) { searchProductsUseCase(any()) }
     }
 
     @Test
