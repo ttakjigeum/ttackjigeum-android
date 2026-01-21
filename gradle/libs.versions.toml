@@ -13,9 +13,7 @@ composeBom = "2025.12.01"
 ksp = "2.3.4"
 google-services = "4.4.4"
 
-# Navigation 2 & Coil
-# Navigation 2 & Coil
-navigationCompose = "2.9.6"
+# Coil
 coilCompose = "3.3.0"
 
 # Navigation 3
@@ -58,10 +56,6 @@ androidx-compose-material-icons-extended = { group = "androidx.compose.material"
 
 # Lifecycle
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
-
-# Navigation 2 (Stable)
-# Navigation 2 (Stable)
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 # Navigation 3
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }

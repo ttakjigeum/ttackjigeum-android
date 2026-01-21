@@ -28,7 +28,7 @@ fun PurchaseButton(
             .height(56.dp),
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AppColors.Primary // Green color
+            containerColor = AppColors.Primary
         )
     ) {
         Text(

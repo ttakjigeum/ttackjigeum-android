@@ -15,7 +15,7 @@ class FirestoreUserConfigRepositoryImpl(
     private val firestore: FirebaseFirestore
 ) : UserConfigRepository {
 
-    private val userId = "1" // Fixed User ID for now
+    private val userId = "1" // 현재는 고정된 사용자 ID 사용
 
     private fun getUserCollection() =
         firestore.collection("users").document(userId).collection("product")

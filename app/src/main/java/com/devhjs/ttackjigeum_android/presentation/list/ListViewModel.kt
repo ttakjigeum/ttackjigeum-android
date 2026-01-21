@@ -36,7 +36,7 @@ class ListViewModel(
 
     init {
         viewModelScope.launch {
-            // Reactive data loading
+            // 반응형 데이터 로딩
             _state
                 .map { it.searchQuery }
                 .distinctUntilChanged()
@@ -114,7 +114,7 @@ class ListViewModel(
     private suspend fun handleOnAddLinkConfirm(link: String) {
         when (val result = addProductUseCase(link)) {
             is Result.Success -> {
-                // Auto-updated via Flow
+                // Flow를 통해 자동 업데이트됨
                 clipboardStateManager.markUrlProcessed(link)
       
             }
@@ -132,7 +132,7 @@ class ListViewModel(
     private suspend fun deleteProduct(productId: Long) {
         when (deleteProductUseCase(productId)) {
             is Result.Success -> {
-                // Auto-updated via Flow
+                // Flow를 통해 자동 업데이트됨
                 _event.emit(ListEvent.ShowToast("상품이 삭제되었습니다."))
             }
             is Result.Error -> {

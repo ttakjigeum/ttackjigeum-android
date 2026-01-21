@@ -78,7 +78,7 @@ class DetailViewModel(
                     val currentProduct = _state.value.product ?: return@launch
                     toggleProductNotificationUseCase(currentProduct.id, currentProduct.targetPrice)
                     
-                    // Toggle execution complete, update UI state
+                    // 토글 실행 완료, UI 상태 업데이트
                     val updatedConfig = getUserConfigUseCase(currentProduct.id)
                     _state.update { it.copy(isNotificationActive = updatedConfig?.notificationEnabled ?: false) }
                 }
@@ -93,10 +93,10 @@ class DetailViewModel(
             is DetailAction.OnTargetPriceChange -> {
                 viewModelScope.launch {
                     updateTargetPriceUseCase(productId, action.price)
-                    // Optimistic update or reload config?
-                    // For now, let's update the local state product's target price to reflect change immediately if needed,
-                    // but the Slider owns its own state mostly.
-                    // However, we should keep the state in sync.
+                    // 낙관적 업데이트(Optimistic update) 또는 설정 리로드?
+                    // 현재는 필요하다면 변경 사항을 즉시 반영하기 위해 로컬 상태의 상품 목표 가격을 업데이트합니다.
+                    // 하지만 슬라이더가 대부분의 자체 상태를 보유합니다.
+                    // 그럼에도 불구하고 동기화를 유지해야 합니다.
                      _state.update { currentState ->
                          currentState.copy(
                              product = currentState.product?.copy(targetPrice = action.price)

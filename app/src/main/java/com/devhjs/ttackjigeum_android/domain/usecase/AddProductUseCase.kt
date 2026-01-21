@@ -35,7 +35,7 @@ class AddProductUseCase(
                         name = parsedData.name,
                         originalPrice = parsedData.originalPrice,
                         currentPrice = parsedData.currentPrice,
-                        targetPrice = (parsedData.currentPrice * 0.9).toInt(), // Default target price 90%
+                        targetPrice = (parsedData.currentPrice * 0.9).toInt(), // 기본 목표가 90% 설정
                         lowestPrice = parsedData.currentPrice,
                         averagePrice = parsedData.currentPrice,
                         isFavorite = false,

@@ -42,7 +42,7 @@ fun PriceInfoCard(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        // Price Row
+        // 가격 정보 행
         Row(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier.fillMaxWidth()
@@ -84,7 +84,7 @@ fun PriceInfoCard(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Stats Row
+        // 통계 정보 행
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -95,7 +95,7 @@ fun PriceInfoCard(
                 iconColor = AppColors.Primary,
                 title = "역대 최저가",
                 price = if (lowestPrice != null) "₩${String.format("%,d", lowestPrice)}" else "-",
-                date = "날짜 정보 없음" // TODO: Add date to Product model
+                date = "날짜 정보 없음" // TODO: Product 모델에 날짜 필드 추가 필요
             )
             PriceStatCard(
                 modifier = Modifier.weight(1f),
@@ -123,7 +123,7 @@ fun PriceStatCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        // border = BorderStroke(1.dp, Color(0xFFEEEEEE)) // Optional border
+        // border = BorderStroke(1.dp, Color(0xFFEEEEEE)) // 선택적 테두리
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

@@ -65,7 +65,7 @@ fun DetailScreen(
 
                 PriceInfoCard(
                     currentPrice = product.currentPrice,
-                    originalPrice = product.originalPrice.takeIf { it > product.currentPrice }, // Validate original price
+                    originalPrice = product.originalPrice.takeIf { it > product.currentPrice }, // 원가 검증
                     targetPrice = product.targetPrice,
                     lowestPrice = product.lowestPrice,
                     averagePrice = product.averagePrice
@@ -88,7 +88,7 @@ fun DetailScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(100.dp)) // Extra space for bottom bar
+            Spacer(modifier = Modifier.height(100.dp)) // 바텀 바를 위한 추가 여백 공간
         }
     }
 }

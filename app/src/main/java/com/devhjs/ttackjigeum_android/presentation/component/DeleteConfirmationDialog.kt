@@ -60,11 +60,11 @@ fun DeleteConfirmationDialog(
                 Box(
                     modifier = Modifier
                         .size(48.dp)
-                        .background(color = Color(0xFFFF5252), shape = CircleShape), // Red circle
+                        .background(color = Color(0xFFFF5252), shape = CircleShape), // 빨간색 원
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PriorityHigh, // Exclamation mark
+                        imageVector = Icons.Default.PriorityHigh, // 느낌표 아이콘
                         contentDescription = "Warning",
                         tint = AppColors.White,
                         modifier = Modifier.size(24.dp)
@@ -73,7 +73,7 @@ fun DeleteConfirmationDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Title
+                // 제목
                 Text(
                     text = "상품 삭제",
                     style = AppTextStyles.largeTextBold,
@@ -83,7 +83,7 @@ fun DeleteConfirmationDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Description
+                // 설명
                 Text(
                     text = "정말 이 상품을 목록에서 삭제하시겠습니까?",
                     style = AppTextStyles.normalTextRegular,
@@ -93,12 +93,12 @@ fun DeleteConfirmationDialog(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Buttons
+                // 버튼 영역
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    // Cancel Button
+                    // 취소 버튼
                     Button(
                         onClick = onDismissRequest,
                         modifier = Modifier
@@ -119,14 +119,14 @@ fun DeleteConfirmationDialog(
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    // Delete Button
+                    // 삭제 버튼
                     Button(
                         onClick = onConfirm,
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFFF5252), // Red
+                            containerColor = Color(0xFFFF5252), // 빨간색
                             contentColor = AppColors.White
                         ),
                         shape = RoundedCornerShape(12.dp),

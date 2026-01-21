@@ -52,7 +52,6 @@ fun TargetPriceSlider(
 ) {
     val minPrice = remember(currentPrice) { (currentPrice * 0.5).toInt() }
     val maxPrice = remember(currentPrice) { (currentPrice * 1.5).toInt() }
-    
     var sliderValue by remember(targetPrice) { mutableFloatStateOf(targetPrice.toFloat()) }
     val focusManager = LocalFocusManager.current
 
