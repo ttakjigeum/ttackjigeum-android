@@ -9,6 +9,7 @@ import com.devhjs.ttackjigeum_android.core.manager.ClipboardStateManager
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.usecase.AddProductUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.DeleteProductUseCase
+import com.devhjs.ttackjigeum_android.domain.usecase.GetProductsUseCase
 import com.devhjs.ttackjigeum_android.domain.usecase.SearchProductsUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -16,6 +17,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import io.mockk.unmockkObject
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -37,6 +39,7 @@ class ListViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule(StandardTestDispatcher())
 
+    private lateinit var getProductsUseCase: GetProductsUseCase
     private lateinit var searchProductsUseCase: SearchProductsUseCase
     private lateinit var addProductUseCase: AddProductUseCase
     private lateinit var deleteProductUseCase: DeleteProductUseCase
@@ -45,6 +48,7 @@ class ListViewModelTest {
 
     @Before
     fun setUp() {
+        getProductsUseCase = mockk(relaxed = true)
         searchProductsUseCase = mockk(relaxed = true)
         addProductUseCase = mockk(relaxed = true)
         deleteProductUseCase = mockk(relaxed = true)
@@ -65,6 +69,7 @@ class ListViewModelTest {
 
     private fun initViewModel() {
         viewModel = ListViewModel(
+            getProductsUseCase = getProductsUseCase,
             searchProductsUseCase = searchProductsUseCase,
             addProductUseCase = addProductUseCase,
             deleteProductUseCase = deleteProductUseCase,
@@ -75,7 +80,8 @@ class ListViewModelTest {
     @Test
     // 초기화 시 초기 상태 검증
     fun `Initial state verification on initialization`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         initViewModel()
         advanceUntilIdle()
 
@@ -88,7 +94,10 @@ class ListViewModelTest {
     @Test
     // 검색어 업데이트 시 상품 검색 트리거
     fun `Search query update triggers product search`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        val testProducts = listOf(mockk<Product>())
+        every { getProductsUseCase() } returns flowOf(Result.Success(testProducts))
+        every { searchProductsUseCase(testProducts, any()) } returns testProducts
+
         initViewModel()
         advanceUntilIdle()
 
@@ -98,13 +107,14 @@ class ListViewModelTest {
 
         val state = viewModel.state.value
         assertEquals(query, state.searchQuery)
-        coVerify { searchProductsUseCase(query) }
+        verify { searchProductsUseCase(testProducts, query) }
     }
 
     @Test
     // 링크 추가 확인 시 상품 추가 유스케이스 트리거
     fun `OnAddLinkConfirm triggers add product use case`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         coEvery { addProductUseCase(any()) } returns Result.Success(Unit)
 
         initViewModel()
@@ -115,13 +125,14 @@ class ListViewModelTest {
         advanceUntilIdle()
 
         coVerify { addProductUseCase(link) }
-        io.mockk.verify { clipboardStateManager.markUrlProcessed(link) }
+        verify { clipboardStateManager.markUrlProcessed(link) }
     }
 
     @Test
     // 스와이프 삭제 시 삭제할 상품 설정
     fun `OnSwipeDelete sets product to delete`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         initViewModel()
         advanceUntilIdle()
 
@@ -139,7 +150,8 @@ class ListViewModelTest {
     @Test
     // 삭제 확인 시 상품 삭제 유스케이스 트리거
     fun `OnDeleteConfirm triggers delete product use case`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         coEvery { deleteProductUseCase(any()) } returns Result.Success(Unit)
 
         initViewModel()
@@ -164,7 +176,8 @@ class ListViewModelTest {
     @Test
     // 삭제 취소 시 삭제할 상품 초기화
     fun `OnDeleteCancel clears product to delete`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         initViewModel()
         advanceUntilIdle()
 
@@ -183,7 +196,8 @@ class ListViewModelTest {
     @Test
     // 공유 인텐트 핸들러가 상품 추가 트리거
     fun `ShareIntentHandler triggers add product`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Success(emptyList()))
+        every { getProductsUseCase() } returns flowOf(Result.Success(emptyList()))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
         coEvery { addProductUseCase(any()) } returns Result.Success(Unit)
 
         val sharedUrl = "http://shared.com"
@@ -199,7 +213,8 @@ class ListViewModelTest {
     @Test
     // 에러 발생 시 토스트 메시지 표시
     fun `Error handling shows toast`() = runTest {
-        coEvery { searchProductsUseCase(any()) } returns flowOf(Result.Error(DataError.Network.UNKNOWN))
+        every { getProductsUseCase() } returns flowOf(Result.Error(DataError.Network.UNKNOWN))
+        every { searchProductsUseCase(any(), any()) } returns emptyList()
 
         initViewModel()
 
@@ -217,7 +232,7 @@ class ListViewModelTest {
         every { clipboardStateManager.shouldShowSnackbar(url) } returns true
 
         assertTrue(viewModel.shouldShowClipboardPrompt(url))
-        io.mockk.verify { clipboardStateManager.shouldShowSnackbar(url) }
+        verify { clipboardStateManager.shouldShowSnackbar(url) }
     }
 
     @Test
@@ -225,6 +240,6 @@ class ListViewModelTest {
         initViewModel()
         val url = "http://test.com"
         viewModel.setClipboardDismissed(url)
-        io.mockk.verify { clipboardStateManager.setDismissed(url) }
+        verify { clipboardStateManager.setDismissed(url) }
     }
 }

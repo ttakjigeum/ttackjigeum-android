@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.devhjs.ttackjigeum_android.core.util.ClearFocusOnKeyboardDismissEffect
 import com.devhjs.ttackjigeum_android.core.util.PriceVisualTransformation
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
@@ -163,6 +165,10 @@ private fun PriceInputBox(
     focusManager: androidx.compose.ui.focus.FocusManager
 ) {
     val context = LocalContext.current
+    var isFocused by remember { mutableStateOf(false) }
+    
+    // 키보드가 내려가면 포커스 해제
+    ClearFocusOnKeyboardDismissEffect(isFocused = isFocused)
 
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -203,6 +209,7 @@ private fun PriceInputBox(
                 modifier = Modifier
                     .width(IntrinsicSize.Min)
                     .onFocusChanged { focusState ->
+                        isFocused = focusState.isFocused
                         if (!focusState.isFocused) {
                             validateAndCorrectPrice(
                                 context,

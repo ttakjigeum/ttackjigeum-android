@@ -1,24 +1,13 @@
 package com.devhjs.ttackjigeum_android.domain.usecase
 
-import com.devhjs.ttackjigeum_android.core.util.DataError
-import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.Product
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SearchProductsUseCaseTest {
 
-    private lateinit var getProductsUseCase: GetProductsUseCase
     private lateinit var searchProductsUseCase: SearchProductsUseCase
 
     private val sampleProducts = listOf(
@@ -29,65 +18,36 @@ class SearchProductsUseCaseTest {
 
     @Before
     fun setUp() {
-        getProductsUseCase = mockk()
-        searchProductsUseCase = SearchProductsUseCase(getProductsUseCase)
+        searchProductsUseCase = SearchProductsUseCase()
     }
 
     @Test
-    fun `invoke with empty query returns all products`() = runTest {
-        // Given
-        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
-
+    fun `invoke with empty query returns all products`() {
         // When
-        val result = searchProductsUseCase("").first()
+        val result = searchProductsUseCase(sampleProducts, "")
 
         // Then
-        assertTrue(result is Result.Success)
-        val data = (result as Result.Success).data
-        assertEquals(3, data.size)
+        assertEquals(3, result.size)
+        assertEquals(sampleProducts, result)
     }
 
     @Test
-    fun `invoke with query returns filtered products`() = runTest {
-        // Given
-        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
-
+    fun `invoke with query returns filtered products`() {
         // When
-        val result = searchProductsUseCase("Apple").first()
+        val result = searchProductsUseCase(sampleProducts, "Apple")
 
         // Then
-        assertTrue(result is Result.Success)
-        val data = (result as Result.Success).data
-        assertEquals(2, data.size) // iPhone and iPad
-        assertTrue(data.all { it.name.contains("Apple") })
+        assertEquals(2, result.size) // iPhone and iPad
+        assertTrue(result.all { it.name.contains("Apple") })
     }
 
     @Test
-    fun `invoke with query is case insensitive`() = runTest {
-        // Given
-        every { getProductsUseCase() } returns flowOf(Result.Success(sampleProducts))
-
+    fun `invoke with query is case insensitive`() {
         // When
-        val result = searchProductsUseCase("iphone").first()
+        val result = searchProductsUseCase(sampleProducts, "iphone")
 
         // Then
-        assertTrue(result is Result.Success)
-        val data = (result as Result.Success).data
-        assertEquals(1, data.size)
-        assertEquals("Apple iPhone", data[0].name)
-    }
-
-    @Test
-    fun `invoke propagates error from getProductsUseCase`() = runTest {
-        // Given
-        every { getProductsUseCase() } returns flowOf(Result.Error(DataError.Network.UNKNOWN))
-
-        // When
-        val result = searchProductsUseCase("query").first()
-
-        // Then
-        assertTrue(result is Result.Error)
-        val error = (result as Result.Error).error
-        assertEquals(DataError.Network.UNKNOWN, error)
+        assertEquals(1, result.size)
+        assertEquals("Apple iPhone", result[0].name)
     }
 }
