@@ -1,5 +1,6 @@
 package com.devhjs.ttackjigeum_android.domain.usecase
 
+import android.util.Log
 import com.devhjs.ttackjigeum_android.core.util.DataError
 import com.devhjs.ttackjigeum_android.core.util.Result
 import com.devhjs.ttackjigeum_android.domain.model.ParsedProductData
@@ -11,8 +12,11 @@ import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -28,6 +32,10 @@ class AddProductUseCaseTest {
 
     @Before
     fun setUp() {
+        mockkStatic(Log::class)
+        coEvery { Log.e(any(), any(), any()) } returns 0
+        coEvery { Log.d(any(), any()) } returns 0
+
         productRepository = mockk(relaxed = true)
         productParser = mockk()
         userConfigRepository = mockk(relaxed = true)
@@ -36,6 +44,11 @@ class AddProductUseCaseTest {
             productParser = productParser,
             userConfigRepository = userConfigRepository
         )
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(Log::class)
     }
 
     @Test
@@ -67,8 +80,15 @@ class AddProductUseCaseTest {
     @Test
     fun `invoke returns duplicate error if url already exists`() = runTest {
         val url = "http://test.com/product"
+        val parsedData = ParsedProductData(
+            name = "Test Product",
+            originalPrice = 10000,
+            currentPrice = 9000,
+            url = url,
+            imageUrl = "http://test.com/image.jpg"
+        )
         val existingProduct = Product(
-            id = 1,
+            id = 1L,
             name = "Existing Product",
             originalPrice = 10000,
             currentPrice = 9000,
@@ -79,11 +99,12 @@ class AddProductUseCaseTest {
             url = url,
             imageUrl = ""
         )
-        val userConfig = UserConfig(productId = 1, targetPrice = 8000, notificationEnabled = true)
+        val userConfig = UserConfig(productId = 1L, targetPrice = 8000, notificationEnabled = true)
 
         // Given
+        coEvery { productParser.parseProduct(url) } returns Result.Success(parsedData)
         coEvery { userConfigRepository.getAllUserConfigs() } returns listOf(userConfig)
-        coEvery { productRepository.getProductByIds(listOf(1)) } returns listOf(existingProduct)
+        coEvery { productRepository.getProductByIds(listOf(1L)) } returns listOf(existingProduct)
 
         // When
         val result = addProductUseCase(url)
@@ -93,7 +114,7 @@ class AddProductUseCaseTest {
         val error = (result as Result.Error).error
         assertEquals(DataError.Local.DUPLICATE, error)
 
-        coVerify(exactly = 0) { productParser.parseProduct(any()) }
+        coVerify { productParser.parseProduct(url) }
     }
 
     @Test
@@ -101,8 +122,6 @@ class AddProductUseCaseTest {
         val url = "http://test.com/invalid"
 
         // Given
-        coEvery { userConfigRepository.getAllUserConfigs() } returns emptyList()
-        coEvery { productRepository.getProductByIds(any()) } returns emptyList()
         coEvery { productParser.parseProduct(url) } returns Result.Error(DataError.Network.UNKNOWN)
 
         // When
@@ -121,7 +140,7 @@ class AddProductUseCaseTest {
         val url = "http://test.com/product"
 
         // Given
-        coEvery { userConfigRepository.getAllUserConfigs() } throws RuntimeException("Error")
+        coEvery { productParser.parseProduct(url) } throws RuntimeException("Error")
 
         // When
         val result = addProductUseCase(url)
