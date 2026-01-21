@@ -6,6 +6,8 @@ import com.devhjs.ttackjigeum_android.data.mapper.toDto
 import com.devhjs.ttackjigeum_android.domain.model.Product
 import com.devhjs.ttackjigeum_android.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
 
 class FirestoreProductRepositoryImpl(
@@ -45,24 +47,27 @@ class FirestoreProductRepositoryImpl(
         }
     }
 
-    override suspend fun getProductByIds(ids: List<Long>): List<Product> {
-        if (ids.isEmpty()) return emptyList()
-        return try {
-            // Firestore의 'in' 쿼리는 일반적으로 최대 10개의 값을 지원하지만, 여기서는 간단하게 whereIn을 시도합니다.
-            // 리스트가 큰 경우 여러 쿼리가 필요할 수 있습니다. 현재는 작은 리스트라고 가정합니다.
-            val snapshot = firestore.collection(collectionRegex)
-                .whereIn("id", ids)
-                .get()
-                .await()
+    override suspend fun getProductByIds(ids: List<Long>): List<Product> =
+        kotlinx.coroutines.coroutineScope {
+            if (ids.isEmpty()) return@coroutineScope emptyList()
+            return@coroutineScope try {
+                ids.chunked(10).map { chunk ->
+                    async {
+                        val snapshot = firestore.collection(collectionRegex)
+                            .whereIn("id", chunk)
+                            .get()
+                            .await()
 
-            snapshot.documents.mapNotNull { document ->
-                document.toObject(ProductDto::class.java)?.toDomain()
+                        snapshot.documents.mapNotNull { document ->
+                            document.toObject(ProductDto::class.java)?.toDomain()
+                        }
+                    }
+                }.awaitAll().flatten()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                emptyList()
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
         }
-    }
 
     override suspend fun addProduct(product: Product) {
         try {
