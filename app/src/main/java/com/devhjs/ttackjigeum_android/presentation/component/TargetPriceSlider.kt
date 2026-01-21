@@ -1,5 +1,7 @@
 package com.devhjs.ttackjigeum_android.presentation.component
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,18 +33,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
-import com.devhjs.ttackjigeum_android.ui.theme.AppColors
-import com.devhjs.ttackjigeum_android.core.util.clearFocusOnDone
 import com.devhjs.ttackjigeum_android.core.util.PriceVisualTransformation
+import com.devhjs.ttackjigeum_android.ui.theme.AppColors
+import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
 import kotlin.math.round
 
 @Composable
@@ -84,12 +86,12 @@ fun TargetPriceSlider(
                         )
                     )
                 }
-                
+
                 PriceInputBox(
                     value = sliderValue.toInt(),
                     minPrice = minPrice,
                     maxPrice = maxPrice,
-                    onValueChange = { 
+                    onValueChange = {
                         sliderValue = it.toFloat()
                         onTargetPriceChange(it)
                     },
@@ -151,6 +153,7 @@ fun TargetPriceSlider(
     }
 }
 
+
 @Composable
 private fun PriceInputBox(
     value: Int,
@@ -159,6 +162,8 @@ private fun PriceInputBox(
     onValueChange: (Int) -> Unit,
     focusManager: androidx.compose.ui.focus.FocusManager
 ) {
+    val context = LocalContext.current
+
     Card(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = AppColors.IconGray2),
@@ -176,7 +181,9 @@ private fun PriceInputBox(
                 value = if (value == 0) "" else value.toString(),
                 onValueChange = { newValue ->
                     val filtered = newValue.filter { it.isDigit() }
-                    val price = if (filtered.isEmpty()) 0 else filtered.toLong().coerceAtMost(maxPrice.toLong()).toInt()
+                    // 입력 중에는 상한가 제한을 두지 않음 (자유롭게 입력 후 완료 시 보정)
+                    val price = if (filtered.isEmpty()) 0 else filtered.toLong()
+                        .toInt() // Long 변환 후 Int로 (오버플로우 방지용이지만 간단히 처리)
                     onValueChange(price)
                 },
                 textStyle = AppTextStyles.mediumTextBold,
@@ -184,10 +191,9 @@ private fun PriceInputBox(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                keyboardActions = KeyboardActions(
                     onDone = {
-                        val validPrice = value.coerceIn(minPrice, maxPrice)
-                        onValueChange(validPrice)
+                        validateAndCorrectPrice(context, value, minPrice, maxPrice, onValueChange)
                         focusManager.clearFocus()
                     }
                 ),
@@ -198,13 +204,40 @@ private fun PriceInputBox(
                     .width(IntrinsicSize.Min)
                     .onFocusChanged { focusState ->
                         if (!focusState.isFocused) {
-                            val validPrice = value.coerceIn(minPrice, maxPrice)
-                            if (validPrice != value) {
-                                onValueChange(validPrice)
-                            }
+                            validateAndCorrectPrice(
+                                context,
+                                value,
+                                minPrice,
+                                maxPrice,
+                                onValueChange
+                            )
                         }
                     }
             )
+        }
+    }
+}
+
+private fun validateAndCorrectPrice(
+    context: Context,
+    currentValue: Int,
+    minPrice: Int,
+    maxPrice: Int,
+    onValueChange: (Int) -> Unit
+) {
+    when {
+        currentValue < minPrice -> {
+            onValueChange(minPrice)
+            Toast.makeText(context, "최소 가격보다 낮을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        currentValue > maxPrice -> {
+            onValueChange(maxPrice)
+            Toast.makeText(context, "최대 가격보다 높을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+        else -> {
+            // 정상 범위 내인 경우 별도 처리 없음
         }
     }
 }
