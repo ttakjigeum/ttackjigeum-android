@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,6 +87,8 @@ fun TargetPriceSlider(
                 
                 PriceInputBox(
                     value = sliderValue.toInt(),
+                    minPrice = minPrice,
+                    maxPrice = maxPrice,
                     onValueChange = { 
                         sliderValue = it.toFloat()
                         onTargetPriceChange(it)
@@ -151,6 +154,8 @@ fun TargetPriceSlider(
 @Composable
 private fun PriceInputBox(
     value: Int,
+    minPrice: Int,
+    maxPrice: Int,
     onValueChange: (Int) -> Unit,
     focusManager: androidx.compose.ui.focus.FocusManager
 ) {
@@ -171,7 +176,7 @@ private fun PriceInputBox(
                 value = if (value == 0) "" else value.toString(),
                 onValueChange = { newValue ->
                     val filtered = newValue.filter { it.isDigit() }
-                    val price = if (filtered.isEmpty()) 0 else filtered.toLong().coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+                    val price = if (filtered.isEmpty()) 0 else filtered.toLong().coerceAtMost(maxPrice.toLong()).toInt()
                     onValueChange(price)
                 },
                 textStyle = AppTextStyles.mediumTextBold,
@@ -179,11 +184,26 @@ private fun PriceInputBox(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = clearFocusOnDone(focusManager),
+                keyboardActions = androidx.compose.foundation.text.KeyboardActions(
+                    onDone = {
+                        val validPrice = value.coerceIn(minPrice, maxPrice)
+                        onValueChange(validPrice)
+                        focusManager.clearFocus()
+                    }
+                ),
                 singleLine = true,
                 cursorBrush = SolidColor(AppColors.Primary),
                 visualTransformation = PriceVisualTransformation(),
-                modifier = Modifier.width(IntrinsicSize.Min)
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            val validPrice = value.coerceIn(minPrice, maxPrice)
+                            if (validPrice != value) {
+                                onValueChange(validPrice)
+                            }
+                        }
+                    }
             )
         }
     }
