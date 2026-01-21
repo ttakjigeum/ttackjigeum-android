@@ -20,14 +20,11 @@ class GetProductsUseCase(
             try {
                 val productIds = userConfigs.map { it.productId }
                 val products = productRepository.getProductByIds(productIds)
+                val productMap = products.associateBy { it.id }
 
-                val updatedProducts = products.map { product ->
-                    val config = userConfigs.find { it.productId == product.id }
-                    if (config != null) {
-                        product.copy(targetPrice = config.targetPrice)
-                    } else {
-                        product
-                    }
+                val updatedProducts = userConfigs.mapNotNull { config ->
+                    val product = productMap[config.productId]
+                    product?.copy(targetPrice = config.targetPrice)
                 }
 
                 Result.Success(updatedProducts)

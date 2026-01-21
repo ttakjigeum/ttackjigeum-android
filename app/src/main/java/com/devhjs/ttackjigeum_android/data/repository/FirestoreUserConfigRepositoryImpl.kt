@@ -5,6 +5,7 @@ import com.devhjs.ttackjigeum_android.data.dto.UserConfigDto
 import com.devhjs.ttackjigeum_android.domain.model.UserConfig
 import com.devhjs.ttackjigeum_android.domain.repository.UserConfigRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -39,9 +40,13 @@ class FirestoreUserConfigRepositoryImpl(
         }
     }
 
+
     override suspend fun getAllUserConfigs(): List<UserConfig> {
         return try {
-            val snapshot = getUserCollection().get().await()
+            val snapshot = getUserCollection()
+                .orderBy("productId", Query.Direction.DESCENDING)
+                .get()
+                .await()
             snapshot.documents.mapNotNull { doc ->
                 val dto = doc.toObject(UserConfigDto::class.java)
                 dto?.let {
@@ -59,26 +64,28 @@ class FirestoreUserConfigRepositoryImpl(
     }
 
     override fun getAllUserConfigsFlow(): Flow<List<UserConfig>> = callbackFlow {
-        val listener = getUserCollection().addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                close(error)
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null) {
-                val configs = snapshot.documents.mapNotNull { doc ->
-                    val dto = doc.toObject(UserConfigDto::class.java)
-                    dto?.let {
-                        UserConfig(
-                            productId = it.productId ?: doc.id.toLongOrNull() ?: 0L,
-                            targetPrice = it.targetPrice ?: 0,
-                            notificationEnabled = it.notificationEnabled ?: false
-                        )
-                    }
+        val listener = getUserCollection()
+            .orderBy("productId", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
                 }
-                trySend(configs)
+
+                if (snapshot != null) {
+                    val configs = snapshot.documents.mapNotNull { doc ->
+                        val dto = doc.toObject(UserConfigDto::class.java)
+                        dto?.let {
+                            UserConfig(
+                                productId = it.productId ?: doc.id.toLongOrNull() ?: 0L,
+                                targetPrice = it.targetPrice ?: 0,
+                                notificationEnabled = it.notificationEnabled ?: false
+                            )
+                        }
+                    }
+                    trySend(configs)
+                }
             }
-        }
         awaitClose { listener.remove() }
     }
 
