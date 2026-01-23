@@ -27,6 +27,8 @@ import com.devhjs.ttackjigeum_android.presentation.component.ProductCardItem
 import com.devhjs.ttackjigeum_android.presentation.component.SearchBar
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 import com.devhjs.ttackjigeum_android.ui.theme.AppTextStyles
+import androidx.compose.ui.platform.LocalFocusManager
+import com.devhjs.ttackjigeum_android.core.util.addFocusCleaner
 
 @Composable
 fun ListScreen(
@@ -39,6 +41,7 @@ fun ListScreen(
     onDismissClipboardForever: () -> Unit,
 ) {
     var showSheet by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         containerColor = AppColors.AppBackground,
@@ -58,7 +61,8 @@ fun ListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 20.dp)
+                .addFocusCleaner(focusManager),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 

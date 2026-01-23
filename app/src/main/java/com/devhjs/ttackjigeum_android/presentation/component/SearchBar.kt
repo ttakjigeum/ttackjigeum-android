@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,21 +25,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devhjs.ttackjigeum_android.R
+import com.devhjs.ttackjigeum_android.core.util.ClearFocusOnKeyboardDismissEffect
 import com.devhjs.ttackjigeum_android.ui.theme.AppColors
 
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
     value: String,
-    onValueChange: (String) -> Unit= {},
+    onValueChange: (String) -> Unit = {},
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    // 키보드 가시성 감지 및 포커스 해제
+    ClearFocusOnKeyboardDismissEffect(isFocused = isFocused)
 
     Row(
         modifier = modifier
@@ -85,6 +94,12 @@ fun SearchBar(
                     fontSize = 16.sp,
                     color = Color.Black,
                 ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(
+                    onSearch = {
+                        focusManager.clearFocus()
+                    }
+                )
             )
         }
     }
